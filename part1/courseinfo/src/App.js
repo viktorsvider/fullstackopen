@@ -13,18 +13,20 @@ const Part = props => {
 const Content = props => {
   return (
     <div>
-      <Part part={props.parts[0].name} exercises={props.parts[0].exercises} />
-      <Part part={props.parts[1].name} exercises={props.parts[1].exercises} />
-      <Part part={props.parts[2].name} exercises={props.parts[2].exercises} />
+      {props.parts.map(element => (
+        <>
+          <Part part={element.name} exercises={element.exercises} />
+        </>
+      ))}
     </div>
   );
 };
 
 const Total = props => {
-  const total =
-    props.parts[0].exercises +
-    props.parts[1].exercises +
-    props.parts[2].exercises;
+  const parts = props.parts;
+  const total = parts.reduce((accumulator, object) => {
+    return accumulator + object.exercises;
+  }, 0);
   return <p>Number of exercises {total}</p>;
 };
 
