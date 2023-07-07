@@ -12,18 +12,56 @@ const App = () => {
     "The only way to go fast, is to go well.",
   ];
 
+  const indexOfMax = (points) => {
+    let max = 0;
+    let indexMax = 0;
+    for (let i = 0; i < points.length; i++) {
+      if (points[i] > max) {
+        indexMax = i;
+        max = points[indexMax];
+      }
+    }
+    return indexMax;
+  };
+
   const [selected, setSelected] = useState(0);
-  console.log("render");
+  const [points, setPoints] = useState(Array(anecdotes.length).fill(0));
+  const mostVoted = indexOfMax(points);
+
+  const getNextAnecdote = () => {
+    let current = selected;
+    while (current === selected) {
+      current = Math.floor(Math.random(0, 1) * anecdotes.length);
+    }
+    return current;
+  };
+
+  const vote = (index) => {
+    let currentPoints = [...points];
+    currentPoints[index] += 1;
+    return currentPoints;
+  };
+
   return (
     <div>
+      <h1>Anecdote of the day</h1>
       <p>{anecdotes[selected]}</p>
       <button
         onClick={() => {
-          setSelected(Math.floor(Math.random(0, 1) * anecdotes.length));
+          setPoints(vote(selected));
+        }}
+      >
+        vote
+      </button>
+      <button
+        onClick={() => {
+          setSelected(getNextAnecdote());
         }}
       >
         next anecdote
       </button>
+      <h1>Anecdote with most votes</h1>
+      <p>{anecdotes[mostVoted]}</p>
     </div>
   );
 };
