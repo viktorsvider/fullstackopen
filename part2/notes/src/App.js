@@ -11,6 +11,7 @@ const Part = ({ name, exercises }) => {
 }
 
 const Content = ({ parts }) => {
+  // just completed 2.3 with 2.2
   const sum = parts.reduce((partialSum, part) => partialSum + part.exercises, 0)
   return (
     <div>
