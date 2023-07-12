@@ -1,13 +1,15 @@
 import { useState } from "react";
 
 const App = () => {
-  const [persons, setPersons] = useState([{ name: "Arto Hellas" }]);
+  const [persons, setPersons] = useState([
+    { name: "Arto Hellas", number: "035359090" },
+  ]);
   const [newName, setNewName] = useState("");
+  const [newNumber, setNewNumber] = useState("");
 
   const isPersonPresent = (persons, person) => {
-    const personJson = JSON.stringify(person);
     for (const element of persons) {
-      if (JSON.stringify(element) === personJson) {
+      if (person.name === element.name) {
         return true;
       }
     }
@@ -18,7 +20,13 @@ const App = () => {
     event.preventDefault();
     const personObject = {
       name: newName,
+      number: newNumber,
     };
+
+    if (personObject.name === "" || personObject.number === "") {
+      alert("Please input non-empty name and phone number");
+      return;
+    }
 
     if (!isPersonPresent(persons, personObject)) {
       setPersons(persons.concat(personObject));
@@ -27,10 +35,15 @@ const App = () => {
     }
 
     setNewName("");
+    setNewNumber("");
   };
 
   const handleNameChange = (event) => {
     setNewName(event.target.value);
+  };
+
+  const handleNumberChange = (event) => {
+    setNewNumber(event.target.value);
   };
 
   return (
@@ -41,12 +54,17 @@ const App = () => {
           name: <input value={newName} onChange={handleNameChange} />
         </div>
         <div>
+          number: <input value={newNumber} onChange={handleNumberChange} />
+        </div>
+        <div>
           <button type="submit">add</button>
         </div>
       </form>
       <h2>Numbers</h2>
       {persons.map((persona) => (
-        <div key={persona.name}>{persona.name}</div>
+        <div key={persona.name}>
+          {persona.name} {persona.number}
+        </div>
       ))}
     </div>
   );
