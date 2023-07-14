@@ -58,6 +58,9 @@ const App = () => {
 
     if (!isPersonPresent(persons, personObject)) {
       setPersons(persons.concat(personObject));
+      axios
+        .post("http://localhost:3001/persons", personObject)
+        .catch((error) => console.log(error));
     } else {
       alert(`${personObject.name} is already added to a phonebook`);
     }
