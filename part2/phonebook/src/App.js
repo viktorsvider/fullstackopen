@@ -61,6 +61,14 @@ const App = () => {
     setNewNumber("");
   };
 
+  const handleDeletion = (person) => {
+    if (window.confirm(`Do you really want to delete ${person.name}???`)) {
+      const result = persons.filter((p1) => p1 !== person);
+      setPersons(result);
+      phonebookService.deleteObject(person.id);
+    }
+  };
+
   return (
     <div>
       <h2>Phonebook</h2>
@@ -77,7 +85,11 @@ const App = () => {
         handleNumberChange={handleNumberChange}
       />
       <h2>Numbers</h2>
-      <Phonebook persons={persons} filter={newFilter} />
+      <Phonebook
+        persons={persons}
+        filter={newFilter}
+        handleDeletion={handleDeletion}
+      />
     </div>
   );
 };

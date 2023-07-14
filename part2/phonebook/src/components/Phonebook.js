@@ -1,17 +1,20 @@
-const Phonebook = ({ persons, filter }) => {
+const Phonebook = ({ persons, filter, handleDeletion }) => {
   const filterLower = filter.toLowerCase();
+  persons.map((person) => console.log(person));
   if (filter === "") {
-    return persons.map((persona) => (
-      <div key={persona.name}>
-        {persona.name} {persona.number}
+    return persons.map((person) => (
+      <div key={person.name}>
+        {person.name} {person.number}
+        <button onClick={() => handleDeletion(person)}>delete</button>
       </div>
     ));
   } else {
     return persons
-      .filter((persona) => persona.name.toLowerCase().includes(filterLower))
-      .map((filteredPersons) => (
-        <div key={filteredPersons.name}>
-          {filteredPersons.name} {filteredPersons.number}
+      .filter((person) => person.name.toLowerCase().includes(filterLower))
+      .map((filteredPerson) => (
+        <div key={filteredPerson.name}>
+          {filteredPerson.name} {filteredPerson.number}
+          <button onClick={() => handleDeletion(filteredPerson)}>delete</button>
         </div>
       ));
   }
