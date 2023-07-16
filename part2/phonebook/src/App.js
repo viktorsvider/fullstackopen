@@ -8,7 +8,6 @@ const App = () => {
   const [persons, setPersons] = useState([]);
 
   useEffect(() => {
-    console.log("effect");
     phonebookService.getAll().then((data) => setPersons(data));
   }, []);
 
@@ -39,13 +38,17 @@ const App = () => {
 
   const addPerson = (event) => {
     event.preventDefault();
+    const maxId =
+      persons.length > 0 ? Math.max(...persons.map((person) => person.id)) : 0;
+
     const personObject = {
       name: newName,
       number: newNumber,
+      id: maxId + 1,
     };
 
-    if (personObject.name === "" || personObject.number === "") {
-      alert("Please input non-empty name and phone number");
+    if (personObject.name === "") {
+      alert("Please input non-empty name");
       return;
     }
 
@@ -54,7 +57,30 @@ const App = () => {
         .create(personObject)
         .then(setPersons(persons.concat(personObject)));
     } else {
-      alert(`${personObject.name} is already added to a phonebook`);
+      if (
+        window.confirm(
+          `${personObject.name} is already added to phonebook, would you like
+         to update old number?`
+        )
+      ) {
+        const index = persons.findIndex((e) => e.name === personObject.name);
+
+        if (index === undefined || index < 0 || index > persons.length - 1) {
+          throw Error("INVALID INDEX");
+        }
+
+        personObject.id = persons[index].id;
+
+        phonebookService
+          .update(personObject.id, personObject)
+          .catch((error) => console.log(error));
+
+        setPersons([
+          ...persons.slice(0, index),
+          personObject,
+          ...persons.slice(index + 1, persons.length),
+        ]);
+      }
     }
 
     setNewName("");
