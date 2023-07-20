@@ -1,6 +1,5 @@
 const Phonebook = ({ persons, filter, handleDeletion }) => {
   const filterLower = filter.toLowerCase();
-  // console.log(persons, filter);
   if (filter === "") {
     return persons.map((person) => (
       <div key={person.name}>

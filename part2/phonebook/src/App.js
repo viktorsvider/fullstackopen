@@ -1,8 +1,11 @@
 import { useState, useEffect } from "react";
 import Phonebook from "./components/Phonebook";
 import Filter from "./components/Filter";
+import Notification from "./components/Notification";
 import PersonForm from "./components/PersonForm";
 import phonebookService from "./services/phonebook";
+import "./App.css";
+import "./index.css";
 
 const App = () => {
   const [persons, setPersons] = useState([]);
@@ -14,6 +17,7 @@ const App = () => {
   const [newName, setNewName] = useState("");
   const [newNumber, setNewNumber] = useState("");
   const [newFilter, setNewFilterEntry] = useState("");
+  const [newNotificationMessage, setNewNotificationMessage] = useState(null);
 
   const handleNameChange = (event) => {
     setNewName(event.target.value);
@@ -36,6 +40,13 @@ const App = () => {
     return false;
   };
 
+  const updateNotification = (message, delay) => {
+    setNewNotificationMessage(message);
+    setTimeout(() => {
+      setNewNotificationMessage(null);
+    }, delay);
+  };
+
   const addPerson = (event) => {
     event.preventDefault();
     const maxId =
@@ -56,6 +67,7 @@ const App = () => {
       phonebookService
         .create(personObject)
         .then(setPersons(persons.concat(personObject)));
+      updateNotification(`Added ${personObject.name} to phonebook`, 5000);
     } else {
       if (
         window.confirm(
@@ -80,6 +92,10 @@ const App = () => {
           personObject,
           ...persons.slice(index + 1, persons.length),
         ]);
+        updateNotification(
+          `Updated ${personObject.name} number to ${personObject.number}`,
+          5000
+        );
       }
     }
 
@@ -93,8 +109,9 @@ const App = () => {
       setPersons(result);
       phonebookService.deleteObject(person.id);
     }
+    updateNotification(`Deleted ${person.name} from phonebook`, 5000);
   };
-
+  console.log(`${newNotificationMessage} to be shown`);
   return (
     <div>
       <h2>Phonebook</h2>
@@ -103,6 +120,7 @@ const App = () => {
         handleNewFilterChange={handleNewFilterEntryChange}
       />
       <h2>add a new</h2>
+      <Notification message={newNotificationMessage}></Notification>
       <PersonForm
         onSubmit={addPerson}
         name={newName}
