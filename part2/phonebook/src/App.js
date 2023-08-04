@@ -105,13 +105,23 @@ const App = () => {
 
   const handleDeletion = (person) => {
     if (window.confirm(`Do you really want to delete ${person.name}???`)) {
-      const result = persons.filter((p1) => p1 !== person);
-      setPersons(result);
-      phonebookService.deleteObject(person.id);
+      phonebookService
+        .deleteObject(person.id)
+        .then(() => {
+          const updatedPersons = persons.filter((p1) => p1 !== person);
+          setPersons(updatedPersons);
+          updateNotification(`Deleted ${person.name} from phonebook`, 5000);
+        })
+        .catch((error) => {
+          console.error("Error deleting:", error);
+          updateNotification(
+            `Error deleting ${person.name}: ${error.message}`,
+            5000
+          );
+        });
     }
-    updateNotification(`Deleted ${person.name} from phonebook`, 5000);
   };
-  console.log(`${newNotificationMessage} to be shown`);
+
   return (
     <div>
       <h2>Phonebook</h2>
