@@ -1,0 +1,26 @@
+.button-array {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+  
+  .button-container {
+    display: flex;
+    flex-direction: row;
+    gap: 10px;
+  }
+  
+  .additional-info {
+    overflow: hidden;
+    max-height: 0;
+    transition: max-height 0.3s ease-in-out;
+    background-color: #f5f5f5;
+    padding: 90px;
+    border: 100px solid #ccc;
+  }
+  
+  .additional-info.active {
+    max-height: 100px; /* Adjust as needed */
+    transition: max-height 0.3s ease-in-out;
+  }
+  

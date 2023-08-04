@@ -36,3 +36,27 @@
     transform: rotate(360deg);
   }
 }
+.button-array {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.button-list {
+  display: flex;
+  gap: 10px;
+}
+
+.additional-info {
+  overflow: hidden;
+  max-height: 0;
+  transition: max-height 0.3s ease-in-out;
+}
+
+.additional-info.expanded {
+  max-height: 100px; /* Adjust as needed */
+  transition: max-height 0.3s ease-in-out;
+  background-color: #f5f5f5;
+  padding: 10px;
+  border: 1px solid #ccc;
+}

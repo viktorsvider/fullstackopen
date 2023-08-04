@@ -3,30 +3,7 @@ import "./App.css";
 import Filter from "./components/Filter.js";
 import countriesService from "./services/countries";
 import countries from "./services/countries";
-const ButtonArray = ({ countriesCommonNamesArray, allCountries }) => {
-  const buttonStyle = {
-    backgroundColor: "blue",
-    color: "white",
-    padding: "10px 20px",
-    border: "none",
-    borderRadius: "5px",
-    margin: "5px",
-    cursor: "pointer",
-  };
-  return (
-    <div>
-      {countriesCommonNamesArray.map((countryName, index) => (
-        <button
-          style={buttonStyle}
-          key={index}
-          onClick={() => console.log(countryName, allCountries[index])}
-        >
-          {countryName}
-        </button>
-      ))}
-    </div>
-  );
-};
+import ButtonArray from "./components/ButtonArray";
 
 function App() {
   const [filter, setFilter] = useState("");
@@ -57,10 +34,7 @@ function App() {
   return (
     <div className="App">
       <Filter filter={filter} handleFilterChange={handleFilterChange} />
-      <ButtonArray
-        countriesCommonNamesArray={commonNames}
-        allCountries={allCountries}
-      ></ButtonArray>
+      <ButtonArray commonNames={commonNames}></ButtonArray>
     </div>
   );
 }
