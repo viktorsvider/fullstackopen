@@ -3,7 +3,7 @@ import "./App.css";
 import Filter from "./components/Filter.js";
 import countriesService from "./services/countries";
 import countries from "./services/countries";
-const ButtonArray = ({ countriesCommonNamesArray }) => {
+const ButtonArray = ({ countriesCommonNamesArray, allCountries }) => {
   const buttonStyle = {
     backgroundColor: "blue",
     color: "white",
@@ -15,8 +15,12 @@ const ButtonArray = ({ countriesCommonNamesArray }) => {
   };
   return (
     <div>
-      {countriesCommonNamesArray.map((countryName) => (
-        <button style={buttonStyle} onClick={() => console.log(countryName)}>
+      {countriesCommonNamesArray.map((countryName, index) => (
+        <button
+          style={buttonStyle}
+          key={index}
+          onClick={() => console.log(countryName, allCountries[index])}
+        >
           {countryName}
         </button>
       ))}
@@ -31,7 +35,15 @@ function App() {
 
   useEffect(() => {
     countriesService.getAllCountriesData().then((data) => {
-      setAllCountries(data);
+      setAllCountries(
+        data.sort((a, b) => {
+          const nameA = a?.name?.common.toLowerCase() ?? "NULL";
+          const nameB = b?.name?.common.toLowerCase() ?? "NULL";
+
+          return nameA.localeCompare(nameB);
+        })
+      );
+      console.log(data);
       setCommonNames(
         data.map((country) => country?.name?.common ?? "no common name").sort()
       );
@@ -45,7 +57,10 @@ function App() {
   return (
     <div className="App">
       <Filter filter={filter} handleFilterChange={handleFilterChange} />
-      <ButtonArray countriesCommonNamesArray={commonNames}></ButtonArray>
+      <ButtonArray
+        countriesCommonNamesArray={commonNames}
+        allCountries={allCountries}
+      ></ButtonArray>
     </div>
   );
 }
