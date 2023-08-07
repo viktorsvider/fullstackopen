@@ -1,0 +1,31 @@
+.App {
+  text-align: center;
+  border-left: 30px;
+  display: flex;
+}
+
+.App-logo {
+  height: 40vmin;
+  pointer-events: none;
+}
+
+.centered {
+  text-align: center;
+}
+
+.filter {
+  /* align-self: center; */
+  text-align: center;
+  border: 32px double olive;
+  margin: auto;
+  display: block;
+}
+ 
+.emoji-big {
+  font-size: 10em;
+}
+
+.flag-pic {
+  width: 250px;
+  height: auto;
+}
