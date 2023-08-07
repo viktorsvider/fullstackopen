@@ -6,17 +6,18 @@ function App() {
   const [allCountries, setAllCountries] = useState([]);
   const [filter, setFilter] = useState("");
 
-  const handleFilterChange = (event) => {
-    setFilter(event.target.value);
-  };
-
   useEffect(() => {
     countries
       .getAllCountriesData()
       .then((data) =>
         setAllCountries(data.sort((d1, d2) => d1.name.common > d2.name.common))
-      );
+      )
+      .catch((error) => console.log(error));
   }, []);
+
+  const handleFilterChange = (event) => {
+    setFilter(event.target.value);
+  };
 
   return (
     <div>
