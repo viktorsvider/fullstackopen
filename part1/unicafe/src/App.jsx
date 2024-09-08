@@ -12,16 +12,20 @@ const Statistics = ({ good, neutral, bad }) => {
   const all = good + neutral + bad;
   const average = (good - bad) / all;
   const positive = (good * 100) / all;
-  return (
-    <p>
-      good {good} <br />
-      neutral {neutral} <br />
-      bad {bad} <br />
-      all {all} <br />
-      average {Number.isNaN(average) ? 0 : average} <br />
-      positive {Number.isNaN(positive) ? 0 : positive} % <br />
-    </p>
-  );
+  if (all === 0) {
+    return <p>No feedback given</p>;
+  } else {
+    return (
+      <p>
+        good {good} <br />
+        neutral {neutral} <br />
+        bad {bad} <br />
+        all {all} <br />
+        average {Number.isNaN(average) ? 0 : average} <br />
+        positive {Number.isNaN(positive) ? 0 : positive} % <br />
+      </p>
+    );
+  }
 };
 
 const App = () => {
