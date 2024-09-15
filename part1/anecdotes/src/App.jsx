@@ -1,7 +1,15 @@
 import { useState } from "react";
 
+const Header = ({ text }) => {
+  return <h1>{text}</h1>;
+};
+
 const Button = ({ handleClick, text }) => {
   return <button onClick={handleClick}>{text}</button>;
+};
+
+const Anecdote = ({ anecdote }) => {
+  return <div>{anecdote}</div>;
 };
 
 function getRandomInt(min, max) {
@@ -39,9 +47,14 @@ const App = () => {
 
   return (
     <div>
-      <div>{anecdotes[selected]}</div>
+      <Header text={"Anecdote of the day"}></Header>
+      <Anecdote anecdote={anecdotes[selected]}></Anecdote>
       <Button handleClick={handleVote} text={"vote"}></Button>
       <Button handleClick={handleNextAnecdote} text={"next anecdote"}></Button>
+      <Header text={"Anecdote with most votes"}></Header>
+      <Anecdote
+        anecdote={anecdotes[points.indexOf(Math.max(...points))]}
+      ></Anecdote>
     </div>
   );
 };
