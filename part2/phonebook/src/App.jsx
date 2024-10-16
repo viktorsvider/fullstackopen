@@ -28,6 +28,9 @@ const App = () => {
       alert("Number could not be void");
     } else {
       const newPersons = persons.concat(newPerson);
+      axios
+        .post("http://localhost:3001/persons", newPerson)
+        .then((response) => console.log(response));
       setPersons(newPersons);
       setNewName("");
       setNewNumber("");
