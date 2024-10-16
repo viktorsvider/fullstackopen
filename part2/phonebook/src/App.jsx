@@ -1,8 +1,8 @@
 import { useState, useEffect } from "react";
-import axios from "axios";
 import Filter from "./components/Filter";
 import PersonForm from "./components/PersonForm";
 import Persons from "./components/Persons";
+import phonebookService from "./services/phonebook";
 
 const App = () => {
   const [persons, setPersons] = useState([]);
@@ -11,7 +11,7 @@ const App = () => {
   const [newFilter, setNewFilter] = useState("");
 
   useEffect(() => {
-    axios.get("http://localhost:3001/persons").then((response) => {
+    phonebookService.getAll().then((response) => {
       console.log("promise fullified", response.data);
       setPersons(response.data);
     });
@@ -28,8 +28,8 @@ const App = () => {
       alert("Number could not be void");
     } else {
       const newPersons = persons.concat(newPerson);
-      axios
-        .post("http://localhost:3001/persons", newPerson)
+      phonebookService
+        .create(newPersons)
         .then((response) => console.log(response));
       setPersons(newPersons);
       setNewName("");
