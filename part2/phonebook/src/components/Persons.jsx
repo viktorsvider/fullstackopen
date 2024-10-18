@@ -21,7 +21,7 @@ const Persons = ({ persons, filter }) => {
         .filter((person) => person.name.includes(filter))
         .map((person) => (
           <div key={person.id}>
-            {person.name} {person.number} {person.id}
+            {person.name} {person.number}
             <button
               id={person.id}
               name={person.name}

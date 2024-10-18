@@ -23,8 +23,16 @@ const App = () => {
   const addPerson = (event) => {
     event.preventDefault();
     const newPerson = { name: newName, number: newNumber };
-    if (persons.find((element) => element.name === newPerson.name)) {
-      alert(`${newPerson.name} already added to the phonebook`);
+    const presentPerson = persons.find(
+      (element) => element.name === newPerson.name
+    );
+    if (
+      presentPerson &&
+      window.confirm(
+        `${presentPerson.name} already added to the phonebook, would you like to change it?`
+      )
+    ) {
+      phonebookService.update(presentPerson.id, newPerson);
     } else if (newName.trim() === "") {
       alert("Name could not be void");
     } else if (newNumber.trim() === "") {
