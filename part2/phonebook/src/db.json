@@ -19,53 +19,6 @@
       "name": "Mary Poppendieck",
       "number": "39-23-6423122",
       "id": "4"
-    },
-    {
-      "id": "0661",
-      "name": "Vitalik Buterin",
-      "number": "12-777-123"
-    },
-    {
-      "id": "7197",
-      "name": "abc abc",
-      "number": "12-213-32"
-    },
-    {
-      "0": {
-        "name": "Arto Hellas",
-        "number": "040-123456",
-        "id": "1"
-      },
-      "1": {
-        "name": "Ada Lovelace",
-        "number": "39-44-5323523",
-        "id": "2"
-      },
-      "2": {
-        "name": "Dan Abramov",
-        "number": "12-43-234345",
-        "id": "3"
-      },
-      "3": {
-        "name": "Mary Poppendieck",
-        "number": "39-23-6423122",
-        "id": "4"
-      },
-      "4": {
-        "id": "0661",
-        "name": "Vitalik Buterin",
-        "number": "12-777-123"
-      },
-      "5": {
-        "id": "7197",
-        "name": "abc abc",
-        "number": "12-213-32"
-      },
-      "6": {
-        "name": "king james",
-        "number": "12-911-12"
-      },
-      "id": "d1bd"
     }
   ]
 }

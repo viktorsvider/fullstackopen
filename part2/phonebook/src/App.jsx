@@ -11,10 +11,13 @@ const App = () => {
   const [newFilter, setNewFilter] = useState("");
 
   useEffect(() => {
-    phonebookService.getAll().then((response) => {
-      console.log("promise fullified", response.data);
-      setPersons(response.data);
-    });
+    phonebookService
+      .getAll()
+      .then((response) => {
+        console.log("promise fullified", response.data);
+        setPersons(response.data);
+      })
+      .catch((error) => alert("failed to fetch persons", error));
   }, []);
 
   const addPerson = (event) => {
@@ -30,7 +33,8 @@ const App = () => {
       const newPersons = persons.concat(newPerson);
       phonebookService
         .create(newPersons)
-        .then((response) => console.log(response));
+        .then((response) => console.log(response))
+        .catch((error) => alert("failed to add new person on server", error));
       setPersons(newPersons);
       setNewName("");
       setNewNumber("");
