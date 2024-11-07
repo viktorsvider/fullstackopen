@@ -20,27 +20,60 @@ const App = () => {
       .catch((error) => alert("failed to fetch persons", error));
   }, []);
 
+  const confirmDeletion = (id, name) => {
+    if (window.confirm(`Do you want to delete ${name}?`)) {
+      phonebookService
+        .delete(id)
+        .then(() => {
+          alert(`deleted ${name}`);
+          setPersons(
+            persons.filter((person) => person.id != id && person.name != name)
+          );
+        })
+        .catch((error) => {
+          alert(`failed to delete ${name}`);
+          console.log(error);
+        });
+    }
+  };
+
   const addPerson = (event) => {
     event.preventDefault();
-    const newPerson = { name: newName, number: newNumber };
+    const newPerson = { id: newName, name: newName, number: newNumber };
     const presentPerson = persons.find(
       (element) => element.name === newPerson.name
     );
+
     if (
       presentPerson &&
       window.confirm(
         `${presentPerson.name} already added to the phonebook, would you like to change it?`
       )
     ) {
-      phonebookService.update(presentPerson.id, newPerson);
+      phonebookService
+        .update(presentPerson.id, newPerson)
+        .then(
+          setPersons(
+            persons.map((person) => {
+              if (person.name === presentPerson.name) {
+                return { ...person, number: newNumber };
+              } else {
+                return person;
+              }
+            })
+          )
+        )
+        .catch((error) => console.log(error));
+      console.log(presentPerson, "upd");
     } else if (newName.trim() === "") {
       alert("Name could not be void");
     } else if (newNumber.trim() === "") {
       alert("Number could not be void");
-    } else {
+    } else if (presentPerson === -1) {
+      console.log(presentPerson, "post");
       const newPersons = persons.concat(newPerson);
       phonebookService
-        .create(newPersons)
+        .create(newPerson)
         .then((response) => console.log(response))
         .catch((error) => alert("failed to add new person on server", error));
       setPersons(newPersons);
@@ -76,7 +109,11 @@ const App = () => {
       />
 
       <h3>Numbers</h3>
-      <Persons persons={persons} filter={newFilter} />
+      <Persons
+        persons={persons}
+        filter={newFilter}
+        confirmDeletion={confirmDeletion}
+      />
     </div>
   );
 };

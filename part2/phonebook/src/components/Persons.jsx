@@ -1,20 +1,6 @@
 import phonebookService from "../services/phonebook";
 
-const confirmDeletion = (id, name) => {
-  if (window.confirm(`Do you want to delete ${name}?`)) {
-    phonebookService
-      .delete(id)
-      .then(() => {
-        alert(`deleted ${name}`);
-      })
-      .catch((error) => {
-        alert(`failed to delete ${name}`);
-        console.log(error);
-      });
-  }
-};
-
-const Persons = ({ persons, filter }) => {
+const Persons = ({ persons, filter, confirmDeletion }) => {
   return (
     <div>
       {persons
