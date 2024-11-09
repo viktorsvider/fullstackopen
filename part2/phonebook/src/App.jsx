@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import Filter from "./components/Filter";
+import Notification from "./components/Notification";
 import PersonForm from "./components/PersonForm";
 import Persons from "./components/Persons";
 import phonebookService from "./services/phonebook";
@@ -9,6 +10,7 @@ const App = () => {
   const [newName, setNewName] = useState("");
   const [newNumber, setNewNumber] = useState("");
   const [newFilter, setNewFilter] = useState("");
+  const [notification, setNotification] = useState(null);
 
   useEffect(() => {
     phonebookService
@@ -69,12 +71,18 @@ const App = () => {
       alert("Name could not be void");
     } else if (newNumber.trim() === "") {
       alert("Number could not be void");
-    } else if (presentPerson === -1) {
+    } else if (presentPerson === undefined) {
       console.log(presentPerson, "post");
       const newPersons = persons.concat(newPerson);
       phonebookService
         .create(newPerson)
-        .then((response) => console.log(response))
+        .then((response) => {
+          console.log("added", response);
+          setNotification(`Succesfully added ${newPerson.name}`);
+          setTimeout(() => {
+            setNotification(null);
+          }, 5000);
+        })
         .catch((error) => alert("failed to add new person on server", error));
       setPersons(newPersons);
       setNewName("");
@@ -98,6 +106,8 @@ const App = () => {
     <div>
       <h2>Phonebook</h2>
       <Filter filter={newFilter} handleFilterChange={handleFilterChange} />
+
+      <Notification message={notification} />
 
       <h3>Add a new</h3>
       <PersonForm
