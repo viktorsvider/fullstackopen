@@ -10,7 +10,21 @@ const App = () => {
   const [newName, setNewName] = useState("");
   const [newNumber, setNewNumber] = useState("");
   const [newFilter, setNewFilter] = useState("");
-  const [notification, setNotification] = useState(null);
+  const [notification, setNotification] = useState("");
+  const [isError, setIsError] = useState(false);
+
+  const hideNotification = () => {
+    setNotification("");
+    setIsError(false);
+  };
+
+  const showNotification = (message, timeout, isError = false) => {
+    setNotification(message);
+    setIsError(isError);
+    setTimeout(() => {
+      hideNotification();
+    }, timeout);
+  };
 
   useEffect(() => {
     phonebookService
@@ -33,7 +47,8 @@ const App = () => {
           );
         })
         .catch((error) => {
-          alert(`failed to delete ${name}`);
+          // alert(`failed to delete ${name}`);
+          showNotification(`Number of ${name} was already removed`, 5000, true);
           console.log(error);
         });
     }
@@ -54,7 +69,7 @@ const App = () => {
     ) {
       phonebookService
         .update(presentPerson.id, newPerson)
-        .then(
+        .then(() => {
           setPersons(
             persons.map((person) => {
               if (person.name === presentPerson.name) {
@@ -63,8 +78,12 @@ const App = () => {
                 return person;
               }
             })
-          )
-        )
+          );
+          showNotification(
+            `Succesfully updated number of ${presentPerson.name}`,
+            5000
+          );
+        })
         .catch((error) => console.log(error));
       console.log(presentPerson, "upd");
     } else if (newName.trim() === "") {
@@ -78,10 +97,7 @@ const App = () => {
         .create(newPerson)
         .then((response) => {
           console.log("added", response);
-          setNotification(`Succesfully added ${newPerson.name}`);
-          setTimeout(() => {
-            setNotification(null);
-          }, 5000);
+          showNotification(`Succesfully added ${newPerson.name}`, 5000);
         })
         .catch((error) => alert("failed to add new person on server", error));
       setPersons(newPersons);
@@ -107,7 +123,7 @@ const App = () => {
       <h2>Phonebook</h2>
       <Filter filter={newFilter} handleFilterChange={handleFilterChange} />
 
-      <Notification message={notification} />
+      <Notification message={notification} isError={isError} />
 
       <h3>Add a new</h3>
       <PersonForm
