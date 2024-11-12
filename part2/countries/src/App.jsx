@@ -3,12 +3,48 @@ import { useState, useEffect } from "react";
 import axios from "axios";
 import Filter from "./components/Filter.jsx";
 
+// useEffect(() => {
+//   fetchWeather(country.capital[0]);
+//   console.log("on filter change:", filter);
+// }, [filter]);
+
 function App() {
   const baseurl = "https://studies.cs.helsinki.fi/restcountries/api/all";
   const [countriesData, setCountriesData] = useState(null);
   const [filter, setFilter] = useState("");
+  const weather_api_key = import.meta.env.VITE_WEATHER_API_KEY;
+  const [weather, setWeather] = useState(null);
+  const [selectedCountry, setSelectedCountry] = useState(null);
 
-  const handleClick = () => {};
+  const fetchWeather = (city) => {
+    const weatherUrl = `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${weather_api_key}`;
+    console.log(">city:", city);
+    console.log(">", weatherUrl);
+    axios
+      .get(weatherUrl)
+      .catch((error) => console.error(error))
+      .then((retrievedData) => {
+        setWeather(retrievedData.data);
+        console.log(retrievedData.data);
+      });
+  };
+
+  const Weather = ({ city }) => {
+    // current weather in place
+    // GET https://api.openweathermap.org/data/2.5/weather?lat={lat}&lon={lon}&appid={API key}
+    // OR
+    // GET https://api.openweathermap.org/data/2.5/weather?q={city name}&appid={API key}
+
+    console.log("weather STATE before component render:", weather);
+    return (
+      <div>
+        <h2>Weather in {city}</h2>
+        <p>temperature: {weather.main.temp}</p>
+        <img alt="no icon"></img>
+        <p>wind: {weather.wind.speed} m/s</p>
+      </div>
+    );
+  };
 
   const Button = ({ text, handleClick }) => {
     return <button onClick={handleClick}>{text}</button>;
@@ -24,11 +60,27 @@ function App() {
     // </li>
     // )
     // );
-    console.log(
-      "=======stringify=============",
-      JSON.stringify(Object.entries(country?.languages ?? "null or undefined")),
-      JSON.stringify(country.languages)
-    );
+    // console.log(
+    //   "=======stringify=============",
+    //   JSON.stringify(Object.entries(country?.languages ?? "null or undefined")),
+    //   JSON.stringify(country.languages)
+    // );
+    useEffect(() => {
+      if (selectedCountry && selectedCountry.capital) {
+        const fetchWeather = async () => {
+          try {
+            const response = await axios.get(
+              `https://api.openweathermap.org/data/2.5/weather?q=${selectedCountry.capital[0]}&appid=${weather_api_key}&units=metric`
+            );
+            setWeather(response.data);
+          } catch (error) {
+            console.error("Error fetching weather data:", error);
+          }
+        };
+
+        fetchWeather();
+      }
+    }, [selectedCountry]);
 
     return (
       <div>
@@ -47,6 +99,7 @@ function App() {
           </ul>
         }
         <img src={country.flags.png} alt="NO FLAG"></img>
+        {weather && <Weather city={country.capital}></Weather>}
       </div>
     );
   };
@@ -64,7 +117,7 @@ function App() {
           <Button
             text="show"
             handleClick={() => {
-              setFilter(country.name.common);
+              setSelectedCountry(filtered[0]);
             }}
           ></Button>
         </>
@@ -72,6 +125,8 @@ function App() {
     } else if (filtered.length === 1) {
       console.log("else if");
       return <Info country={filtered[0]}></Info>;
+    } else {
+      return null;
     }
   };
 
