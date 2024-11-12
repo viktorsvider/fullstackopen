@@ -49,7 +49,7 @@ const App = () => {
         .catch((error) => {
           // alert(`failed to delete ${name}`);
           showNotification(`Number of ${name} was already removed`, 5000, true);
-          console.log(error);
+          console.error(error);
         });
     }
   };
