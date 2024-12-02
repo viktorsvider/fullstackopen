@@ -1,5 +1,6 @@
+import Weather from "./Weather";
+
 const CountryInfo = ({ country }) => {
-  console.log(country.languages instanceof Object);
   return (
     <div>
       <h1>{country.name.common}</h1>
@@ -16,6 +17,7 @@ const CountryInfo = ({ country }) => {
         )}
       </ul>
       <img src={country.flags.png} alt="error loading flag"></img>
+      <Weather city={country.capital[0]}></Weather>
     </div>
   );
 };

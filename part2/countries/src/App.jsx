@@ -1,26 +1,30 @@
 import { useState, useEffect } from "react";
 import Filter from "./components/Filter";
-import FilteredCountries from "./components/FilteredCountries";
 import countries from "./services/countries";
+import Countries from "./components/Countries";
 
 function App() {
+  const [countriesData, setCountriesData] = useState([]);
   const [filter, setFilter] = useState("");
-  const [countriesData, setCountriesData] = useState(null);
+  const [filteredCountries, setFilteredCountries] = useState([]);
 
   useEffect(() => {
     countries
       .getAllCountriesData()
-      .then((retreivedData) => {
-        setCountriesData(retreivedData.data);
-        console.log("Succesfully retreived countries data", retreivedData.data);
+      .then((received) => {
+        console.log("useeffect countries");
+        setCountriesData(received.data);
       })
-      .catch((error) =>
-        console.error("Error retrieveing countries data", error)
-      );
+      .catch((error) => console.log(error));
   }, []);
 
   const handleFilterChange = (event) => {
     setFilter(event.target.value);
+    if (filter) {
+      setFilteredCountries(
+        countriesData.filter((country) => country.name.common.includes(filter))
+      );
+    }
   };
 
   if (countriesData) {
@@ -28,10 +32,10 @@ function App() {
       <div>
         find countries
         <Filter handleFilterChange={handleFilterChange}></Filter>
-        <FilteredCountries
-          countriesData={countriesData}
-          filter={filter}
-        ></FilteredCountries>
+        <Countries
+          filteredCountries={filteredCountries}
+          setCountry={setFilteredCountries}
+        ></Countries>
       </div>
     );
   } else {
