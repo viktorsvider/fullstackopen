@@ -1,7 +1,7 @@
 const express = require("express");
 const app = express();
 
-const data = [
+let persons = [
   {
     id: "1",
     name: "Arto Hellas",
@@ -25,21 +25,37 @@ const data = [
 ];
 
 app.get("/api/persons", (request, response) => {
-    response.json(data)
-})
+  response.json(persons);
+});
 
 app.get("/api/persons/:id", (request, response) => {
-    const id = request.params.id;
-    console.log(id)
-    const person = data.filter(person=>person.id===id)
-    if(person) {response.json(person)}
-    else{response.status(404).end()}
-})
+  const id = request.params.id;
+  console.log(id);
+  const personWithId = persons.filter((person) => person.id === id);
+  if (personWithId) {
+    response.json(personWithId);
+  } else {
+    response.status(404).end();
+  }
+});
 
 app.get("/api/info", (request, response) => {
-    const info = `<p>Phonebook has info about ${data.length} people</p>` + new Date().toString();
-    response.send(info)
-})
+  const info =
+    `<p>Phonebook has info about ${persons.length} people</p>` +
+    new Date().toString();
+  response.send(info);
+});
+
+app.delete("/api/persons/:id", (request, response) => {
+  const id = request.params.id;
+  const index = persons.findIndex(person => person.id === id);
+  if (index !== -1) {
+    persons.splice(index, 1)
+    response.status(204).end();
+  } else {
+    response.status(404).end();
+  }
+});
 
 const PORT = 3000;
 app.listen(PORT);

@@ -1,0 +1,8 @@
+###
+GET http://localhost:3000/api/persons
+
+### should be 204
+DELETE http://localhost:3000/api/persons/2
+
+### should be 404
+DELETE http://localhost:3000/api/persons/222
