@@ -61,8 +61,15 @@ app.delete("/api/persons/:id", (request, response) => {
 app.post("/api/persons", (request, response) => {
   const name = request.body.name;
   const number = request.body.number;
+  if(name === undefined || number === undefined) {
+    return response.status(400).send({ error: "name or number missing" });
+  }  
+  const alreadyPresent = persons.some(person=>person.name===name);
+  if(alreadyPresent) {
+    return response.status(400).send({ error: "name must be unique" });
+  }
   const newPerson = {
-    id: Math.round(Math.random() * 100000),
+    id: String(Math.round(Math.random() * 100000)),
     name: name,
     number: number 
   }

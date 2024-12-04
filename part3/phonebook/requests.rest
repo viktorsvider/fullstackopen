@@ -12,6 +12,15 @@ POST http://localhost:3000/api/persons
 Content-Type: application/json
 
 {
-    "name": "George Bool",
+    "name": "George Boolean",
+    "number": "021-323-123"
+}
+
+### should be 200 and return created entry
+POST http://localhost:3000/api/persons
+Content-Type: application/json
+
+{
+    "name": "George Boolean",
     "number": "021-323-123"
 }
