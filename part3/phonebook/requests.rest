@@ -16,7 +16,7 @@ Content-Type: application/json
     "number": "021-323-123"
 }
 
-### should be 200 and return created entry
+### should be 400 and return created entry
 POST http://localhost:3000/api/persons
 Content-Type: application/json
 
