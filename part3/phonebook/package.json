@@ -6,8 +6,8 @@
   "scripts": {
     "start": "node index.js",
     "dev": "nodemon index.js",
-    "build:front": "rm -rf ./dist && cd ../frontend && npm run build && cp ./dist ../phonebook",
-    "deploy": "npm run build:ui && fly deploy",
+    "build:front": "rm -rf ./dist && cd ../frontend && npm run build && cp -r dist ../phonebook",
+    "deploy": "npm run build:front && fly deploy",
     "deploy:front": "",
     "deploy:back": "rm -rf ./dist && fly deploy",
     "test": "echo \"Error: no test specified\" && exit 1"
