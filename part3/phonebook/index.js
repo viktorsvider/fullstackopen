@@ -5,6 +5,7 @@ const express = require("express");
 const morgan = require("morgan");
 const app = express();
 
+app.use(express.static('dist'))
 app.use(express.json());
 app.use(
   morgan(
@@ -93,8 +94,8 @@ app.post("/api/persons", (request, response) => {
     name: name,
     number: number,
   };
-  persons.push(newPerson);
-  response.json(newPerson);
+  Person.create(newPerson).then(response => response.json(response.body))
+  // persons.push(newPerson);
 });
 
 const PORT = process.env.PORT || 3001;
