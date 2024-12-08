@@ -3,8 +3,10 @@ const Person = require("./models/person");
 
 const express = require("express");
 const morgan = require("morgan");
+// const cors = require('cors')
 const app = express();
 
+// app.use(cors())
 app.use(express.static('dist'))
 app.use(express.json());
 app.use(
@@ -90,11 +92,11 @@ app.post("/api/persons", (request, response) => {
     return response.status(400).send({ error: "name must be unique" });
   }
   const newPerson = {
-    id: String(Math.round(Math.random() * 100000)),
+    // id: String(Math.round(Math.random() * 100000)),
     name: name,
     number: number,
   };
-  Person.create(newPerson).then(response => response.json(response.body))
+  Person.create(newPerson).then(person => response.json(person)).catch(error => console.log(error.message))
   // persons.push(newPerson);
 });
 
