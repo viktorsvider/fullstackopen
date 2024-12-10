@@ -7,7 +7,7 @@ const morgan = require("morgan");
 const app = express();
 
 // app.use(cors())
-app.use(express.static('dist'))
+app.use(express.static("dist"));
 app.use(express.json());
 app.use(
   morgan(
@@ -49,13 +49,25 @@ app.get("/api/persons", (request, response) => {
 
 app.get("/api/persons/:id", (request, response) => {
   const id = request.params.id;
-  console.log(id);
-  const personWithId = persons.filter((person) => person.id === id);
-  if (personWithId) {
-    response.json(personWithId);
-  } else {
-    response.status(404).end()
-  }
+  // console.log(id);
+  // const personWithId = persons.filter((person) => person.id === id);
+  // if (personWithId) {
+  //    response.json(personWithId);
+  // } else {
+  //    response.status(404).end()
+  // }
+  Person.findById(id)
+    .then((person) => {
+      if (person) {
+        response.json(person);
+      } else {
+        response.status(404).end();
+      }
+    })
+    .catch((error) => {
+      console.log(error);
+      response.status(400).send({error:"malformatted id"});
+    });
 });
 
 app.get("/api/info", (request, response) => {
@@ -96,7 +108,9 @@ app.post("/api/persons", (request, response) => {
     name: name,
     number: number,
   };
-  Person.create(newPerson).then(person => response.json(person)).catch(error => console.log(error.message))
+  Person.create(newPerson)
+    .then((person) => response.json(person))
+    .catch((error) => console.log(error.message));
   // persons.push(newPerson);
 });
 
