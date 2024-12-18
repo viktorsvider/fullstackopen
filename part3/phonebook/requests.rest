@@ -1,6 +1,12 @@
-### UPDATE THIS TO WORK WITH DATABASE
 ###
 GET http://localhost:3001/api/persons
+
+### code 200
+GET http://localhost:3001/api/persons/6758614abadecd595fbdac25
+
+### code 500 malformatted id
+GET http://localhost:3001/api/persons/6758614abadec
+
 
 ### should be 204 if correct id
 DELETE http://localhost:3001/api/persons/2
