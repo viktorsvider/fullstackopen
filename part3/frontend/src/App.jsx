@@ -56,7 +56,7 @@ const App = () => {
 
   const addPerson = (event) => {
     event.preventDefault();
-    const newPerson = { id: newName, name: newName, number: newNumber };
+    const newPerson = { name: newName, number: newNumber };
     const presentPerson = persons.find(
       (element) => element.name === newPerson.name
     );

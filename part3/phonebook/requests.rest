@@ -1,14 +1,15 @@
+### UPDATE THIS TO WORK WITH DATABASE
 ###
-GET http://localhost:3000/api/persons
+GET http://localhost:3001/api/persons
 
-### should be 204
-DELETE http://localhost:3000/api/persons/2
+### should be 204 if correct id
+DELETE http://localhost:3001/api/persons/2
 
-### should be 404
-DELETE http://localhost:3000/api/persons/222
+### should be 500 
+DELETE http://localhost:3001/api/persons/222
 
 ### should be 200 and return created entry
-POST http://localhost:3000/api/persons
+POST http://localhost:3001/api/persons
 Content-Type: application/json
 
 {

@@ -84,13 +84,26 @@ app.get("/api/info", (request, response) => {
 
 app.delete("/api/persons/:id", (request, response) => {
   const id = request.params.id;
-  const index = persons.findIndex((person) => person.id === id);
-  if (index !== -1) {
-    persons.splice(index, 1);
-    response.status(204).end();
-  } else {
-    response.status(404).end();
-  }
+  // const index = persons.findIndex((person) => person.id === id);
+  // if (index !== -1) {
+  //   persons.splice(index, 1);
+  //   response.status(204).end();
+  // } else {
+  //   response.status(404).end();
+  // }
+  Person.findByIdAndDelete(id)
+    .then(result => {
+      if(result){
+        console.log(result)
+        response.status(204).end()
+      } else {
+        response.status(404).send({error: "Document not found"})
+      }
+    })
+    .catch(error => {
+      response.status(500).send({error: "Malformatted id"})
+      console.log(error)
+    })
 });
 
 app.post("/api/persons", (request, response) => {
