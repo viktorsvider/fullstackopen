@@ -18,7 +18,7 @@ const App = () => {
     setIsError(false);
   };
 
-  const showNotification = (message, timeout, isError = false) => {
+  const showNotification = (message, timeout = 5000, isError = false) => {
     setNotification(message);
     setIsError(isError);
     setTimeout(() => {
@@ -30,7 +30,7 @@ const App = () => {
     phonebookService
       .getAll()
       .then((response) => {
-        console.log("promise fullified", response.data);
+        console.log("promise fulfilled", response.data);
         setPersons(response.data);
       })
       .catch((error) => alert("failed to fetch persons", error));
@@ -43,11 +43,10 @@ const App = () => {
         .then(() => {
           alert(`deleted ${name}`);
           setPersons(
-            persons.filter((person) => person.id != id && person.name != name)
+            persons.filter((person) => person.id !== id && person.name !== name)
           );
         })
         .catch((error) => {
-          // alert(`failed to delete ${name}`);
           showNotification(`Number of ${name} was already removed`, 5000, true);
           console.error(error);
         });
@@ -71,36 +70,33 @@ const App = () => {
         .update(presentPerson.id, newPerson)
         .then(() => {
           setPersons(
-            persons.map((person) => {
-              if (person.name === presentPerson.name) {
-                return { ...person, number: newNumber };
-              } else {
-                return person;
-              }
-            })
+            persons.map((person) =>
+              person.name === presentPerson.name
+                ? { ...person, number: newNumber }
+                : person
+            )
           );
           showNotification(
-            `Succesfully updated number of ${presentPerson.name}`,
+            `Successfully updated number of ${presentPerson.name}`,
             5000
           );
         })
-        .catch((error) => console.log(error));
-      console.log(presentPerson, "upd");
+        .catch((error) => {
+          console.error("caught", error);
+          showNotification(error.response.data.message, 5000);
+        });
     } else if (newName.trim() === "") {
       alert("Name could not be void");
     } else if (newNumber.trim() === "") {
       alert("Number could not be void");
     } else if (presentPerson === undefined) {
-      console.log(presentPerson, "post");
-      const newPersons = persons.concat(newPerson);
       phonebookService
         .create(newPerson)
-        .then((response) => {
-          console.log("added", response);
-          showNotification(`Succesfully added ${newPerson.name}`, 5000);
+        .then((createdPerson) => {
+          setPersons(persons.concat(createdPerson));
+          showNotification(`Successfully added ${createdPerson.name}`, 5000);
         })
-        .catch((error) => alert("failed to add new person on server", error));
-      setPersons(newPersons);
+        .catch((error) => showNotification(error.response.data.error, 5000));
       setNewName("");
       setNewNumber("");
     }

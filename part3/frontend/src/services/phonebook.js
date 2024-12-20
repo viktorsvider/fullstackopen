@@ -18,8 +18,8 @@ const deleteObject = (id) => {
 }
 
 export default { 
-  getAll: getAll, 
-  create: create,  
-  update: update,
+  getAll, 
+  create,  
+  update,
   delete: deleteObject
 }

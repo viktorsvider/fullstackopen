@@ -5,14 +5,14 @@ const Persons = ({ persons, filter, confirmDeletion }) => {
     <div>
       {persons
         .filter((person) => person.name.includes(filter))
-        .map((person) => (
-          <div key={person.id}>
-            {person.name} {person.number}
+        .map(({ id, name, number }) => (
+          <div key={id}>
+            {name} {number}
             <button
-              id={person.id}
-              name={person.name}
+              id={id}
+              name={name}
               onClick={() => {
-                confirmDeletion(person.id, person.name);
+                confirmDeletion(id, name);
               }}
             >
               delete

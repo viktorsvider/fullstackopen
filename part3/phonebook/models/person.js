@@ -8,7 +8,7 @@ console.log("Connecting to", url);
 
 mongoose
   .connect(url)
-  .then((result) => {
+  .then(() => {
     console.log("connected to MongoDB");
   })
   .catch((error) => {
@@ -16,15 +16,23 @@ mongoose
   });
 
 const personSchema = new mongoose.Schema({
-  name: String,
-  number: String,
+  name: {
+    type: String,
+    minLength: 3,
+    required: true
+  },
+  number: {
+    type: String,
+    required: true,
+    minLength: 8
+  },
 });
 
 personSchema.set("toJSON", {
-  transform: (document, returedObject) => {
-    returedObject.id = returedObject._id.toString();
-    delete returedObject._id;
-    delete returedObject.__v;
+  transform: (document, returnedObject) => {
+    returnedObject.id = returnedObject._id.toString();
+    delete returnedObject._id;
+    delete returnedObject.__v;
   },
 });
 
