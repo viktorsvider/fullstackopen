@@ -18,9 +18,17 @@ const App = () => {
     setIsError(false);
   };
 
-  const showNotification = (message, timeout = 5000, isError = false) => {
+  const showNotification = (message, timeout = 5000) => {
     setNotification(message);
-    setIsError(isError);
+    setIsError(false);
+    setTimeout(() => {
+      hideNotification();
+    }, timeout);
+  };
+
+  const showError = (errorMessage, timeout = 5000) => {
+    setNotification(errorMessage);
+    setIsError(true);
     setTimeout(() => {
       hideNotification();
     }, timeout);
@@ -47,7 +55,7 @@ const App = () => {
           );
         })
         .catch((error) => {
-          showNotification(`Number of ${name} was already removed`, 5000, true);
+          showError(`Number of ${name} was already removed`, 5000);
           console.error(error);
         });
     }
@@ -83,20 +91,26 @@ const App = () => {
         })
         .catch((error) => {
           console.error("caught", error);
-          showNotification(error.response.data.error, 5000);
+          showError(error.response.data.error, 5000);
         });
     } else if (newName.trim() === "") {
       alert("Name could not be void");
     } else if (newNumber.trim() === "") {
       alert("Number could not be void");
     } else if (presentPerson === undefined) {
+      // FIX: why need .data.name and .data??
+      // ok we need because of axios if we want to display
+      // actual response from backend not just local var
       phonebookService
         .create(newPerson)
         .then((createdPerson) => {
-          setPersons(persons.concat(createdPerson));
-          showNotification(`Successfully added ${createdPerson.name}`, 5000);
+          setPersons(persons.concat(createdPerson.data));
+          showNotification(
+            `Successfully added ${createdPerson.data.name}`,
+            5000
+          );
         })
-        .catch((error) => showNotification(error.response.data.error, 5000));
+        .catch((error) => showError(error.response.data.error, 5000));
       setNewName("");
       setNewNumber("");
     }

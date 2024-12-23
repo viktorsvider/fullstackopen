@@ -4,7 +4,7 @@ const express = require("express");
 const morgan = require("morgan");
 const app = express();
 
-app.use(express.static("dist"));
+//app.use(express.static("dist"));
 app.use(express.json());
 
 morgan.token("separator", () => "-----------------------------------------------------------------\n");
@@ -87,7 +87,7 @@ app.post("/api/persons", (request, response, next) => {
 
       const newPerson = { name, number };
       Person.create(newPerson)
-        .then((person) => response.json(person))
+        .then((person) => {response.json(person)})
         .catch((error) => next(error));
     })
     .catch((error) => next(error));
