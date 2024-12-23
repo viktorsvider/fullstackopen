@@ -83,7 +83,7 @@ const App = () => {
         })
         .catch((error) => {
           console.error("caught", error);
-          showNotification(error.response.data.message, 5000);
+          showNotification(error.response.data.error, 5000);
         });
     } else if (newName.trim() === "") {
       alert("Name could not be void");

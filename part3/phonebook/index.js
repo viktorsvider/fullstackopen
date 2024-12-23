@@ -7,13 +7,13 @@ const app = express();
 app.use(express.static("dist"));
 app.use(express.json());
 
-morgan.token("separator", () => "------------------------------------");
+morgan.token("separator", () => "-----------------------------------------------------------------\n");
 morgan.token("post-body", (request) => {
-  if (request.method === "POST") return `\n${JSON.stringify(request.body)}`;
+  if (request.method === "POST") return `${JSON.stringify(request.body)}`;
 });
 app.use(
   morgan(
-    ":method :url :status :res[content-length] - :response-time ms\n:separator\n:post-body\n"
+    ":separator  > :method :url | HTTP code :status | :res[content-length] bytes | :response-time ms | :post-body"
   )
 );
 
@@ -25,7 +25,10 @@ const errorHandler = (error, request, response, next) => {
   if (error.name === "CastError") {
     return response.status(400).send({ error: "malformatted id" });
   } else if (error.name === "ValidationError") {
-    return response.status(400).json({ error: error.message });
+    console.log(error)
+    console.log("====================================")
+    console.log(error.message)
+    return response.status(400).json({ error: error.message});
   }
   next(error);
 };
