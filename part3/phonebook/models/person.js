@@ -23,6 +23,12 @@ const personSchema = new mongoose.Schema({
   },
   number: {
     type: String,
+    validate: {
+      validator: (v) => {
+        const regex_number = /\d{2}-\d{5,}|\d{3}-\d{4,}/
+        return regex_number.test(v);
+      }
+    },
     required: true,
     minLength: 8
   },

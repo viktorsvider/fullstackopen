@@ -1,10 +1,6 @@
 import phonebookService from "../services/phonebook";
 
 const Persons = ({ persons, filter, confirmDeletion }) => {
-  console.log("PERSONS");
-  console.log(persons.length);
-  console.log(persons[0]);
-  console.log(JSON.stringify(persons));
   return (
     <div>
       {persons
