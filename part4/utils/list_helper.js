@@ -3,10 +3,22 @@ const dummy = (blogs) => {
 };
 
 const totalLikes = (blogs) => {
-  const result = blogs.reduce((accamulator, currentValue) => {
-    return accamulator + currentValue.likes;
+  const result = blogs.reduce((accumulator, currentValue) => {
+    return accumulator + currentValue.likes;
   }, 0);
   return result;
 };
 
-module.exports = { dummy, totalLikes };
+const favouriteBlog = (blogs) => {
+  if (blogs.length === 0) {
+    return null;
+  }
+  const favourite = blogs.reduce(
+    (max, currentValue) =>
+      max.likes < currentValue.likes ? currentValue : max,
+    blogs[0],
+  );
+  return favourite;
+};
+
+module.exports = { dummy, totalLikes, favouriteBlog };
