@@ -40,4 +40,23 @@ const mostBlogs = (blogs) => {
   return top;
 };
 
-module.exports = { dummy, totalLikes, favouriteBlog, mostBlogs };
+const mostLikes = (blogs) => {
+  if (blogs.length === 0) {
+    return null;
+  }
+  const likesByAuthor = new Map();
+  blogs.forEach((blog) => {
+    const currentLikes = likesByAuthor.get(blog.author) || 0;
+    likesByAuthor.set(blog.author, currentLikes + blog.likes);
+  });
+
+  let top = { author: "", likes: 0 };
+  likesByAuthor.forEach((likes, author) => {
+    if (likes > top.likes) {
+      top = { author, likes };
+    }
+  });
+  return top;
+};
+
+module.exports = { dummy, totalLikes, favouriteBlog, mostBlogs, mostLikes };

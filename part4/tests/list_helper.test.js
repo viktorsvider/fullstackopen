@@ -107,4 +107,29 @@ describe("total likes", () => {
       assert.deepStrictEqual(result, blogs[2]);
     });
   });
+
+  describe("most liked author", () => {
+    test("when list is void should return null", () => {
+      const result = listHelper.mostLikes([]);
+      assert.deepStrictEqual(result, null);
+    });
+
+    test("when list has only one blog, return likes and author of that blog", () => {
+      const mostLikedAuthor = {
+        author: "Edsger W. Dijkstra",
+        likes: 5,
+      };
+      const result = listHelper.mostLikes(listWithOneBlog);
+      assert.deepStrictEqual(result, mostLikedAuthor);
+    });
+
+    test("when list has multiple blogs, return author with most likes", () => {
+      const mostLikedAuthor = {
+        author: "Edsger W. Dijkstra",
+        likes: 17,
+      };
+      const result = listHelper.mostLikes(blogs);
+      assert.deepStrictEqual(result, mostLikedAuthor);
+    });
+  });
 });
