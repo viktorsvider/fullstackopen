@@ -1,3 +1,5 @@
+const _ = require("lodash");
+
 const dummy = (blogs) => {
   return 1;
 };
@@ -22,41 +24,35 @@ const favouriteBlog = (blogs) => {
 };
 
 const mostBlogs = (blogs) => {
-  if (blogs.length === 0) {
-    return null;
-  }
-  const blogsByAuthor = new Map();
-  blogs.forEach((blog) => {
-    blogsByAuthor.set(blog.author, (blogsByAuthor.get(blog.author) || 0) + 1);
-  });
+  if (blogs.length === 0) return null;
+  const authorsCount = _.countBy(blogs, "author");
+  const topAuthor = _.maxBy(
+    Object.entries(authorsCount),
+    ([author, count]) => count,
+  );
 
-  let top = { author: "", blogs: 0 };
-  blogsByAuthor.forEach((count, author) => {
-    if (count > top.blogs) {
-      top = { author, blogs: count };
-    }
-  });
-
-  return top;
+  const [author, count] = topAuthor;
+  return { author, count };
 };
 
 const mostLikes = (blogs) => {
-  if (blogs.length === 0) {
-    return null;
-  }
-  const likesByAuthor = new Map();
-  blogs.forEach((blog) => {
-    const currentLikes = likesByAuthor.get(blog.author) || 0;
-    likesByAuthor.set(blog.author, currentLikes + blog.likes);
-  });
+  if (blogs.length === 0) return null;
+  const likesByAuthor = _.reduce(
+    blogs,
+    (result, blog) => {
+      result[blog.author] = (result[blog.author] || 0) + blog.likes;
+      return result;
+    },
+    {},
+  );
 
-  let top = { author: "", likes: 0 };
-  likesByAuthor.forEach((likes, author) => {
-    if (likes > top.likes) {
-      top = { author, likes };
-    }
-  });
-  return top;
+  const topAuthor = _.maxBy(
+    Object.entries(likesByAuthor),
+    ([author, likes]) => likes,
+  );
+
+  const [author, likes] = topAuthor;
+  return { author, likes };
 };
 
 module.exports = { dummy, totalLikes, favouriteBlog, mostBlogs, mostLikes };
