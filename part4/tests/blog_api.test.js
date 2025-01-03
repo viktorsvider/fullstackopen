@@ -35,6 +35,27 @@ test("unique property of blog post is named id not _id", async () => {
   assert.strictEqual(response.body[0]._id, undefined, "_id should not exist");
 });
 
+test("making HTTP POST creates a new blog post", async () => {
+  const blog = {
+    title: "New blog post",
+    author: "New author",
+    url: "newblog.com",
+    likes: 0,
+  };
+  await api
+    .post("/api/blogs")
+    .send(blog)
+    .expect(201)
+    .expect("Content-Type", /application\/json/);
+  const response = await api.get("/api/blogs");
+  const postedBlog = response.body.at(-1);
+  assert.deepStrictEqual(postedBlog.title, blog.title);
+  assert.deepStrictEqual(postedBlog.author, blog.author);
+  assert.deepStrictEqual(postedBlog.url, blog.url);
+  assert.deepStrictEqual(postedBlog.likes, blog.likes);
+  assert.strictEqual(response.body.length, testHelper.initialBlogs.length + 1);
+});
+
 after(async () => {
   await mongoose.connection.close();
 });
