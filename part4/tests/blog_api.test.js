@@ -56,6 +56,25 @@ test("making HTTP POST creates a new blog post", async () => {
   assert.strictEqual(response.body.length, testHelper.initialBlogs.length + 1);
 });
 
+test("if likes property is missing, it will default to 0", async () => {
+  const blog = {
+    title: "New blog post missing likes property",
+    author: "New author",
+    url: "newblog.com",
+  };
+  await api
+    .post("/api/blogs")
+    .send(blog)
+    .expect(201)
+    .expect("Content-Type", /application\/json/);
+  const response = await api.get("/api/blogs");
+  const postedBlog = response.body.at(-1);
+  assert.deepStrictEqual(postedBlog.title, blog.title);
+  assert.deepStrictEqual(postedBlog.author, blog.author);
+  assert.deepStrictEqual(postedBlog.url, blog.url);
+  assert.deepStrictEqual(postedBlog.likes, 0);
+});
+
 after(async () => {
   await mongoose.connection.close();
 });
