@@ -75,6 +75,28 @@ test("if likes property is missing, it will default to 0", async () => {
   assert.deepStrictEqual(postedBlog.likes, 0);
 });
 
+test("if likes property is missing, it will default to 0", async () => {
+  const blog_no_title = {
+    author: "Missing Title",
+    url: "missingtitle.com",
+  };
+  const blog_no_url = {
+    title: "Missing url",
+    author: "Missing Url",
+  };
+  await api
+    .post("/api/blogs")
+    .send(blog_no_title)
+    .expect(400)
+    .expect("Content-Type", /application\/json/);
+
+  await api
+    .post("/api/blogs")
+    .send(blog_no_url)
+    .expect(400)
+    .expect("Content-Type", /application\/json/);
+});
+
 after(async () => {
   await mongoose.connection.close();
 });

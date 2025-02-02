@@ -1,9 +1,17 @@
 const mongoose = require("mongoose");
 
 const blogSchema = new mongoose.Schema({
-  title: String,
+  title: {
+    type: String,
+    minLength: 1,
+    required: true,
+  },
   author: String,
-  url: String,
+  url: {
+    type: String,
+    minLength: 5,
+    required: true,
+  },
   likes: Number,
 });
 
