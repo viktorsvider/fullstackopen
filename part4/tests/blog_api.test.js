@@ -108,6 +108,31 @@ test("delete blog post", async () => {
   await api.get(`/api/blogs/${IDtoDelete}`).expect(404)
 })
 
+test("update a blog post", async () => {
+  const response = await api.get("/api/blogs");
+  const blogToUpdate = response.body[0];
+
+  assert.ok(blogToUpdate, "There should be at least one blog to update");
+
+  const updatedData = {
+    title: "Updated Title",
+    author: blogToUpdate.author,
+    url: blogToUpdate.url,
+    likes: blogToUpdate.likes + 10,
+  };
+
+  const updateResponse = await api
+    .put(`/api/blogs/${blogToUpdate.id}`)
+    .send(updatedData)
+    .expect(200)
+    .expect("Content-Type", /application\/json/);
+
+  const checkResponse = await api.get(`/api/blogs/${blogToUpdate.id}`);
+  assert.strictEqual(updateResponse.body.title, updatedData.title);
+  assert.strictEqual(updateResponse.body.likes, updatedData.likes);
+});
+
+
 after(async () => {
   await mongoose.connection.close();
 });
