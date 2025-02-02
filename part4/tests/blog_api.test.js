@@ -97,6 +97,17 @@ test("if likes property is missing, it will default to 0", async () => {
     .expect("Content-Type", /application\/json/);
 });
 
+test("delete blog post", async () => {
+  await api
+    .get("/api/blogs")
+    .expect(200)
+    .expect("Content-Type", /application\/json/);
+  const IDtoDelete = (await api.get("/api/blogs")).body[0].id;
+  assert.ok(IDtoDelete, "blog id to delete should exist")
+  await api.delete(`/api/blogs/${IDtoDelete}`).expect(204)
+  await api.get(`/api/blogs/${IDtoDelete}`).expect(404)
+})
+
 after(async () => {
   await mongoose.connection.close();
 });
