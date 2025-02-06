@@ -11,3 +11,20 @@ Content-Type: application/json
     "url": "http://www.blog.patek.com",
     "likes": 99
 }
+
+@name = `$random.alphabetic(7)`
+
+###
+GET http://localhost:3003/api/users
+
+
+
+###
+POST http://localhost:3003/api/users
+Content-Type: application/json
+
+{
+    "name": "viktor smith",
+    "username": "fjpek",
+    "password": "{{$guid}}"
+}
