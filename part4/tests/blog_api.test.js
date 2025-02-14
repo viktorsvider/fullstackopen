@@ -75,7 +75,7 @@ test("if likes property is missing, it will default to 0", async () => {
   assert.deepStrictEqual(postedBlog.likes, 0);
 });
 
-test("if likes property is missing, it will default to 0", async () => {
+test("if title or url property is missing, results in Bad Request", async () => {
   const blog_no_title = {
     author: "Missing Title",
     url: "missingtitle.com",

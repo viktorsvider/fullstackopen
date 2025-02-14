@@ -1,5 +1,18 @@
 const Blog = require("../models/blog");
 
+const initialUsers = [
+  {
+    name: "Jeffrey Smith",
+    username: "jsmith",
+    password: "liljjsecret"
+  },
+  {
+    name: "Gwern Bwerhen",
+    username: "gwern",
+    password: "sVs12_!aDs$"
+  }
+]
+
 const initialBlogs = [
   {
     title: "Borrow checker in Rust",
@@ -45,4 +58,4 @@ const nonExistingId = async () => {
   return blog._id.toString();
 };
 
-module.exports = { initialBlogs, blogsInDb, nonExistingId };
+module.exports = { initialBlogs, initialUsers, blogsInDb, nonExistingId };
