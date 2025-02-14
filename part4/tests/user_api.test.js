@@ -29,6 +29,7 @@ describe('when initially there are 2 users', () => {
             .expect(200)
             .expect("Content-Type", /application\/json/);
         const response = await api.get("/api/users");
+        console.log(response.body);
 
         assert.strictEqual(response.body.length, testHelper.initialUsers.length);
     });
