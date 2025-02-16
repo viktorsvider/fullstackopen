@@ -12,6 +12,9 @@ const api = supertest(app);
 
 describe('when initially there are 2 users', () => {
     beforeEach(async () => {
+        // add user retreival check in blog_api_test file 
+        // retreive users
+        // for each blog_post post with random retreived id and dynamically set author name
         await User.deleteMany();
         const userObjects = await Promise.all(
             testHelper.initialUsers.map(async (user) => {
@@ -29,7 +32,7 @@ describe('when initially there are 2 users', () => {
             .expect(200)
             .expect("Content-Type", /application\/json/);
         const response = await api.get("/api/users");
-        console.log(response.body);
+        // console.log(response.body);
 
         assert.strictEqual(response.body.length, testHelper.initialUsers.length);
     });
@@ -46,8 +49,8 @@ describe('when initially there are 2 users', () => {
 
     test("Bad Request if username or password missing or < 3 character long", async () => {
         const user = {
-            username: "ab",
-            name: "Anrew Boyko",
+            username: "rm",
+            name: "Robert C. Martin",
             password: "39.&sK;#_aX,"
         }
 

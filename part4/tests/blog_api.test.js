@@ -1,4 +1,4 @@
-const { test, after, beforeEach } = require("node:test");
+const { test, after, beforeEach, before } = require("node:test");
 const assert = require("node:assert");
 const mongoose = require("mongoose");
 const supertest = require("supertest");
@@ -7,14 +7,29 @@ const testHelper = require("./test_helper");
 const Blog = require("../models/blog");
 
 const api = supertest(app);
-
 beforeEach(async () => {
-  await Blog.deleteMany();
+  const users = await api
+    .get("/api/users")
+    .expect(200)
+    .expect("Content-Type", /application\/json/)
 
-  const blogObjects = testHelper.initialBlogs.map((blog) => new Blog(blog));
+  // test("users already in database and got names and usernames", async () => {
+  //   assert.ok(users.body[0].name, "User should have name")
+  //   assert.ok(users.body[0].username, "User should have username")
+  //   assert.ok(users.body[0]._id, "User should have _id")
+  //   assert.ok(users.body[0].id, "User should have id")
+  //   console.log("users: ", users)
+  // })
+
+  await Blog.deleteMany()
+
+  const [min, max] = [0, users.body.length]
+  const randUserIndex = () => Math.floor(Math.floor(Math.random() * (max - min)) + min)
+
+  const blogObjects = testHelper.initialBlogs.map((blog) => new Blog({ ...blog, userId: users.body.at(randUserIndex()).id }));
   const promiseArray = blogObjects.map((blog) => blog.save());
   await Promise.all(promiseArray);
-});
+})
 
 test("blogs are returned as json", async () => {
   await api
@@ -36,10 +51,15 @@ test("unique property of blog post is named id not _id", async () => {
 });
 
 test("making HTTP POST creates a new blog post", async () => {
+  const users = await api.get("/api/users");
+  const userId = users.body[0].id;
+  assert.ok(mongoose.isValidObjectId(userId), "valid userId as ObjectID");
+
   const blog = {
     title: "New blog post",
     author: "New author",
     url: "newblog.com",
+    user: userId,
     likes: 0,
   };
   await api
@@ -57,10 +77,13 @@ test("making HTTP POST creates a new blog post", async () => {
 });
 
 test("if likes property is missing, it will default to 0", async () => {
+  const userId = (await api.get("/api/users")).body[0].id
+  assert.ok(mongoose.isValidObjectId(userId), "valid userId as ObjectID");
   const blog = {
     title: "New blog post missing likes property",
     author: "New author",
     url: "newblog.com",
+    user: userId
   };
   await api
     .post("/api/blogs")
@@ -76,13 +99,17 @@ test("if likes property is missing, it will default to 0", async () => {
 });
 
 test("if title or url property is missing, results in Bad Request", async () => {
+  const userId = (await api.get("/api/users")).body[0].id
+  assert.ok(mongoose.isValidObjectId(userId), "valid userId as ObjectID");
   const blog_no_title = {
     author: "Missing Title",
     url: "missingtitle.com",
+    user: userId
   };
   const blog_no_url = {
     title: "Missing url",
     author: "Missing Url",
+    user: userId
   };
   await api
     .post("/api/blogs")
@@ -109,6 +136,8 @@ test("delete blog post", async () => {
 })
 
 test("update a blog post", async () => {
+  const userId = (await api.get("/api/users")).body[0].id
+  assert.ok(mongoose.isValidObjectId(userId), "valid userId as ObjectID");
   const response = await api.get("/api/blogs");
   const blogToUpdate = response.body[0];
 
@@ -119,6 +148,7 @@ test("update a blog post", async () => {
     author: blogToUpdate.author,
     url: blogToUpdate.url,
     likes: blogToUpdate.likes + 10,
+    user: userId
   };
 
   const updateResponse = await api

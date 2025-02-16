@@ -10,6 +10,16 @@ const initialUsers = [
     name: "Gwern Bwerhen",
     username: "gwern",
     password: "sVs12_!aDs$"
+  },
+  {
+    name: "Guido van Rossum",
+    username: "guido",
+    password: "python2over3"
+  },
+  {
+    name: "Bjarne Stroustrup",
+    username: "bjarne_genius",
+    password: "constexpr_template<T>(T)[T]{T}"
   }
 ]
 
@@ -32,13 +42,9 @@ const initialBlogs = [
     url: "blog.cpp.com/cpp27draft",
     likes: 12,
   },
-  {
-    title: "Landing Falcon Heavy on Mars",
-    author: "Elon Musk",
-    url: "spacex.com/blog/landing-on-mars",
-    likes: 1242,
-  },
 ];
+
+
 
 const blogsInDb = async () => {
   const blogs = await Blog.find({});
