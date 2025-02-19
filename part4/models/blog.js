@@ -14,10 +14,10 @@ const blogSchema = new mongoose.Schema({
   },
   likes: Number,
   user: {
-    // required: true,
+    required: true,
     ref: "User",
     type: mongoose.Schema.Types.ObjectId,
-  }
+  },
 });
 
 blogSchema.set("toJSON", {

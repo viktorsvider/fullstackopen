@@ -11,19 +11,22 @@ blogRouter.get("/", async (req, res) => {
 });
 
 blogRouter.post("/", async (req, res) => {
+  console.log("POST");
   const { title, author, url, likes } = req.body;
-  const userId = req.body.userId
+  console.log("req.body:", req.body);
+  const userId = req.body.userId;
   if (!title || !url) {
     return res.status(400).json({ error: "Title and URL are required" });
   }
 
-  let user = await User.findById(userId)
+  let user = await User.findById(userId);
 
-  console.log(userId, req.body)
-  let users = await User.find({})
-  console.log(users)
+  console.log(userId, req.body);
+  let users = await User.find({});
+  // console.log("Users", users)
+  console.log("User", user);
   if (!user) {
-    return res.status(400).json({ error: "Bad user id or user missing" })
+    return res.status(400).json({ error: "Bad user id or user missing" });
   }
 
   const blog = new Blog({
@@ -31,13 +34,13 @@ blogRouter.post("/", async (req, res) => {
     author,
     url,
     likes: likes || 0,
-    user: user.id
+    user: user.id,
   });
   const savedBlog = await blog.save();
 
   // update  blogs info
-  user.blogs = user.blogs.concat(savedBlog)
-  await user.save()
+  user.blogs = user.blogs.concat(savedBlog);
+  await user.save();
   res.status(201).json(savedBlog);
 });
 
@@ -59,7 +62,7 @@ blogRouter.put("/:id", async (req, res) => {
   const updatedBlog = await Blog.findByIdAndUpdate(
     req.params.id,
     { title, author, likes, url },
-    { new: true, runValidators: true, context: "query" }
+    { new: true, runValidators: true, context: "query" },
   );
   if (updatedBlog) {
     res.json(updatedBlog);
