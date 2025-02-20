@@ -1,30 +1,23 @@
 const express = require("express");
 const Blog = require("../models/blog");
 const User = require("../models/user");
-const { default: mongoose } = require("mongoose");
 
 const blogRouter = express.Router();
 
 blogRouter.get("/", async (req, res) => {
-  const blogs = await Blog.find({}).populate("user");
+  const blogs = await Blog.find({}).populate("user", { username: 1, name: 1, id: 1 })
   res.json(blogs);
 });
 
 blogRouter.post("/", async (req, res) => {
-  console.log("POST");
   const { title, author, url, likes } = req.body;
-  console.log("req.body:", req.body);
-  const userId = req.body.userId;
+  const userId = req.body.user;
   if (!title || !url) {
     return res.status(400).json({ error: "Title and URL are required" });
   }
 
   let user = await User.findById(userId);
 
-  console.log(userId, req.body);
-  let users = await User.find({});
-  // console.log("Users", users)
-  console.log("User", user);
   if (!user) {
     return res.status(400).json({ error: "Bad user id or user missing" });
   }
@@ -34,12 +27,11 @@ blogRouter.post("/", async (req, res) => {
     author,
     url,
     likes: likes || 0,
-    user: user.id,
+    user: user._id,
   });
   const savedBlog = await blog.save();
 
-  // update  blogs info
-  user.blogs = user.blogs.concat(savedBlog);
+  user.blogs = user.blogs.concat(savedBlog._id);
   await user.save();
   res.status(201).json(savedBlog);
 });
@@ -54,6 +46,7 @@ blogRouter.delete("/:id", async (req, res) => {
 });
 
 blogRouter.put("/:id", async (req, res) => {
+  // TODO: add user change
   const { title, author, likes, url } = req.body;
   if (!title && !author && !likes && !url) {
     return res.status(400).json({ error: "At least one field is required" });

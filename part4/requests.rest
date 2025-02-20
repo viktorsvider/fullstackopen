@@ -25,6 +25,21 @@ Content-Type: application/json
 
 {
     "name": "viktor smith",
-    "username": "fjpek",
+    "username": "fjpeI988I",
     "password": "{{$guid}}"
+}
+
+###
+GET http://localhost:3003/api/users
+
+###
+POST http://localhost:3003/api/blogs
+Content-Type: application/json
+
+{
+    "title": "Newblog post",
+    "author": "Newauthor",
+    "url": "newblog.com",
+    "user": "67b713a91542c3ee99b83b98",
+    "likes": "123231"
 }

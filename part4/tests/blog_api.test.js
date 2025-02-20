@@ -10,46 +10,51 @@ const bcrypt = require("bcrypt");
 
 const api = supertest(app);
 
+
 beforeEach(async () => {
+  await User.deleteMany();
+  const userObjects = await Promise.all(
+    testHelper.initialUsers.map(async (user) => {
+      const passwordHash = await bcrypt.hash(user.password, 10);
+      return new User({
+        name: user.name,
+        username: user.username,
+        passwordHash,
+      });
+    })
+  );
+
+  const savedUsers = await Promise.all(userObjects.map((user) => user.save()));
+
   const usersResponse = await api
     .get("/api/users")
     .expect(200)
     .expect("Content-Type", /application\/json/);
 
-  const users = usersResponse.body;
-
-  if (users.length === 0) {
-    await User.deleteMany();
-    const userObjects = await Promise.all(
-      testHelper.initialUsers.map(async (user) => {
-        const passwordHash = await bcrypt.hash(user.password, 10);
-        return new User({
-          name: user.name,
-          username: user.username,
-          passwordHash,
-        });
-      }),
-    );
-    await Promise.all(userObjects.map((user) => user.save()));
-  }
-
   await Blog.deleteMany();
-
+  const users = usersResponse.body;
   const [min, max] = [0, users.length];
   const randUserIndex = () => Math.floor(Math.random() * (max - min)) + min;
 
-  // console.log("Fetched users:", users);
+  const promiseArray = testHelper.initialBlogs.map(async (blog) => {
+    const randomUser = users[randUserIndex()];
 
-  const promiseArray = testHelper.initialBlogs.map((blog) => {
-    const randomUser = users[randUserIndex()]; // Select a random user
-    // console.log("Creating blog with user:", randomUser);
-    console.log("create:", new Blog({ ...blog, user: randomUser.id }));
-    console.log("randomUser:", randomUser);
-    console.log("randomUser.id:", randomUser.id);
-    return new Blog({
+    // Convert the user ID to ObjectId before assigning
+    const userObjectId = new mongoose.Types.ObjectId(randomUser.id);
+
+    const newBlog = new Blog({
       ...blog,
-      user: randomUser.id,
-    }).save();
+      user: userObjectId, // Ensure ObjectId is assigned
+    });
+
+    const savedBlog = await newBlog.save();
+
+    // Properly update the user
+    await User.findByIdAndUpdate(userObjectId, {
+      $push: { blogs: savedBlog._id },
+    });
+
+    return savedBlog;
   });
 
   await Promise.all(promiseArray);
@@ -67,22 +72,6 @@ test("blogs are returned as json", async () => {
   );
 });
 
-// test("users already in database and got names and usernames", async () => {
-//   assert.ok(users.body[0].name, "User should have name")
-//   assert.ok(users.body[0].username, "User should have username")
-//   assert.ok(users.body[0]._id, "User should have _id")
-//   assert.ok(users.body[0].id, "User should have id")
-//   console.log("users: ", users)
-// })
-
-test("blogs are returned as json", async () => {
-  await api
-    .get("/api/blogs")
-    .expect(200)
-    .expect("Content-Type", /application\/json/);
-  const response = await api.get("/api/blogs");
-  assert.strictEqual(response.body.length, testHelper.initialBlogs.length);
-});
 
 test("unique property of blog post is named id not _id", async () => {
   await api
@@ -106,6 +95,7 @@ test("making HTTP POST creates a new blog post", async () => {
     user: userId,
     likes: 0,
   };
+  console.log(blog)
   await api
     .post("/api/blogs")
     .send(blog)
@@ -113,12 +103,13 @@ test("making HTTP POST creates a new blog post", async () => {
     .expect("Content-Type", /application\/json/);
   const response = await api.get("/api/blogs");
   const postedBlog = response.body.at(-1);
-  assert.deepStrictEqual(postedBlog.title, blog.title);
-  assert.deepStrictEqual(postedBlog.author, blog.author);
-  assert.deepStrictEqual(postedBlog.url, blog.url);
-  assert.deepStrictEqual(postedBlog.likes, blog.likes);
-  assert.deepStrictEqual(postedBlog.user, blog.user);
-  assert.strictEqual(response.body.length, testHelper.initialBlogs.length + 1);
+  console.log("posted:", postedBlog)
+  assert.strictEqual(postedBlog.title, blog.title, "equal titles");
+  assert.strictEqual(postedBlog.author, blog.author, "equal author");
+  assert.strictEqual(postedBlog.url, blog.url, "equal url");
+  assert.strictEqual(postedBlog.likes, blog.likes, "equal likes");
+  assert.strictEqual(postedBlog.user, blog.user, "equal user");
+  assert.strictEqual(response.body.length, testHelper.initialBlogs.length + 1, "equal number of blogs");
 });
 
 test("if likes property is missing, it will default to 0", async () => {

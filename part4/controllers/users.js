@@ -18,19 +18,29 @@ usersRouter.post("/", async (request, response) => {
       .json({ error: "Password missing or shorter than 3 symbols" });
   }
 
+  const existingUser = await User.findOne({ username });
+  if (existingUser) {
+    return response
+      .status(400)
+      .json({ error: "Username already taken" });
+  }
+
   const user = new User({
     username,
     name,
     passwordHash,
   });
 
+  // user.blogs = user.blogs.concat(saved)
   const savedUser = await user.save();
 
   response.status(201).json(savedUser);
 });
 
 usersRouter.get("/", async (request, response) => {
-  const users = await User.find({}).populate("blogs");
+  // const users = await User.find({}).populate("blogs");
+  const users = await User.find({}).populate("blogs", { title: 1, author: 1, url: 1 });
+
   if (users) {
     response.status(200).json(users);
   } else {
