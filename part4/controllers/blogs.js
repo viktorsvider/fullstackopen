@@ -1,8 +1,18 @@
 const express = require("express");
+const jwt = require("jsonwebtoken")
 const Blog = require("../models/blog");
 const User = require("../models/user");
 
 const blogRouter = express.Router();
+
+const getTokenFrom = request => {
+  const authorization = request.get("authorization")
+  if (authorization && authorization.startsWith("Bearer ")) {
+    return authorization.replace("Bearer ", "")
+  }
+  return null
+}
+
 
 blogRouter.get("/", async (req, res) => {
   const blogs = await Blog.find({}).populate("user", { username: 1, name: 1, id: 1 })
@@ -11,6 +21,12 @@ blogRouter.get("/", async (req, res) => {
 
 blogRouter.post("/", async (req, res) => {
   const { title, author, url, likes } = req.body;
+
+  const decodedToken = jwt.verify(getTokenFrom(req), process.env.SECRET)
+  if (!decodedToken.id) {
+    return res.status(401).json({ error: "token invalid" })
+  }
+
   const userId = req.body.user;
   if (!title || !url) {
     return res.status(400).json({ error: "Title and URL are required" });
