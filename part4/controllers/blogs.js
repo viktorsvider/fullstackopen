@@ -21,18 +21,18 @@ blogRouter.get("/", async (req, res) => {
 
 blogRouter.post("/", async (req, res) => {
   const { title, author, url, likes } = req.body;
+  const userId = req.body.user;
+
+  let user = await User.findById(userId);
 
   const decodedToken = jwt.verify(getTokenFrom(req), process.env.SECRET)
   if (!decodedToken.id) {
     return res.status(401).json({ error: "token invalid" })
   }
 
-  const userId = req.body.user;
   if (!title || !url) {
     return res.status(400).json({ error: "Title and URL are required" });
   }
-
-  let user = await User.findById(userId);
 
   if (!user) {
     return res.status(400).json({ error: "Bad user id or user missing" });
