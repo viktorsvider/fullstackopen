@@ -21,7 +21,7 @@ blogRouter.get("/", async (req, res) => {
 
 blogRouter.post("/", async (req, res) => {
   const { title, author, url, likes } = req.body;
-  const userId = req.body.user;
+  const userId = req.user;
 
   let user = await User.findById(userId);
   if (!req.token) {
@@ -56,7 +56,7 @@ blogRouter.post("/", async (req, res) => {
 
 blogRouter.delete("/:id", async (req, res) => {
   const token = req.token
-  const userId = req.body.user;
+  const userId = req.user;
   if (!token) {
     return res.status(401).json({ error: "no token provided" })
   }

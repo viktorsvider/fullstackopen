@@ -45,9 +45,19 @@ const tokenExtractor = (request, response, next) => {
   next()
 }
 
+const userExtractor = (request, response, next) => {
+  const user = request.body.user
+  if (user) {
+    request.user = user
+  } else {
+    request.user = null
+  }
+  next()
+}
 module.exports = {
   requestLogger,
   unknownEndpoint,
   errorHandler,
-  tokenExtractor
+  tokenExtractor,
+  userExtractor
 };
