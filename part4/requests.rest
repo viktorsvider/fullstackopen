@@ -35,11 +35,64 @@ GET http://localhost:3003/api/users
 ###
 POST http://localhost:3003/api/blogs
 Content-Type: application/json
+Authorization: 
 
 {
     "title": "Newblog post",
     "author": "Newauthor",
     "url": "newblog.com",
-    "user": "67b713a91542c3ee99b83b98",
+    "user": "67bc9c161fd3bf60450c45f4",
     "likes": "123231"
 }
+
+
+### login and get token
+POST http://localhost:3003/api/login
+Content-Type: application/json
+
+{
+    "name": "Guido van Rossum",
+    "username": "guido",
+    "password": "python2over3"
+}
+### eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6Imd1aWRvIiwiaWQiOiI2N2JjOWMxNjFmZDNiZjYwNDUwYzQ1ZjQiLCJpYXQiOjE3NDA0MTQ1OTN9.Fo7chy5q2ySSlOm30W8fgfPmb3Wol6ErPjKCee3uQP0
+###
+DELETE http://localhost:3003/api/blogs/67bc9c161fd3bf60450c45fe
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6Imd1aWRvIiwiaWQiOiI2N2JjOWMxNjFmZDNiZjYwNDUwYzQ1ZjQiLCJpYXQiOjE3NDA0MTQ1OTN9.Fo7chy5q2ySSlOm30W8fgfPmb3Wol6ErPjKCee3uQP0
+
+{
+    "title": "Newblog post",
+    "author": "Newauthor",
+    "url": "newblog.com",
+    "user": "67bc9c161fd3bf60450c45f4",
+    "likes": "123231"
+}
+
+###
+DELETE http://localhost:3003/api/blogs/67bc9
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6Imd1aWRvIiwiaWQiOiI2N2JjOWMxNjFmZDNiZjYwNDUwYzQ1ZjQiLCJpYXQiOjE3NDA0MTQ1OTN9.Fo7chy5q2ySSlOm30W8fgfPmb3Wol6ErPjKCee3uQP0 
+
+{
+    "title": "Newblog post",
+    "author": "Newauthor",
+    "url": "newblog.com",
+    "user": "67bc9c161fd3bf60450c45f4",
+    "likes": "123231"
+}
+
+# ### POST back
+#   {
+#     "username": "guido",
+#     "name": "Guido van Rossum",
+#     "blogs": [
+#       {
+#         "title": "Borrow checker in Rust",
+#         "author": "Guido van Rossum",
+#         "url": "blog.rust.com/borrow-checker",
+#         "id": "67bc9c161fd3bf60450c45fe"
+#       }
+#     ],
+#     "id": "67bc9c161fd3bf60450c45f4"
+#   }

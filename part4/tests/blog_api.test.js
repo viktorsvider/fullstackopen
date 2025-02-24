@@ -209,6 +209,60 @@ test("delete blog post", async () => {
   await api.get(`/api/blogs/${IDtoDelete}`).expect(404);
 });
 
+test("user that didn't create try to delete blog post ", async () => {
+  const userWithPost = await User.findOne({ blogs: { $ne: [] } })
+  const userId = userWithPost.id
+  const user = testHelper.initialUsers.find(user => user.username !== userWithPost.username)
+
+  assert.ok(user, "user doesn't exist")
+
+  const loginResponse = await api
+    .post("/api/login")
+    .send({ username: user.username, password: user.password })
+    .expect(200)
+    .expect("Content-Type", /application\/json/)
+  const token = `Bearer ${loginResponse.body.token}`
+
+  const IDtoDelete = userWithPost.blogs[0].toString()
+  assert.ok(IDtoDelete, "blog id to delete should exist");
+  await api
+    .delete(`/api/blogs/${IDtoDelete}`)
+    .set("authorization", token)
+    .send({ user: userId })
+    .expect(401);
+  await api.get(`/api/blogs/${IDtoDelete}`).expect(404);
+});
+
+test("user that didn't create try to delete blog post using creator token", async () => {
+  const userWithPost = await User.findOne({ blogs: { $ne: [] } })
+  const userId = userWithPost.id
+  const user = testHelper.initialUsers.find(user => user.username !== userWithPost.username)
+
+  const creator = testHelper.initialUsers.find(user => user.username === userWithPost.username)
+  assert.ok(user, "user doesn't exist")
+  assert.ok(creator, "creator doesn't exist")
+
+  const loginResponse = await api
+    .post("/api/login")
+    .send({ username: user.username, password: user.password })
+    .expect(200)
+    .expect("Content-Type", /application\/json/)
+  const token = `Bearer ${loginResponse.body.token}`
+
+  // add jwt sign
+  const decodedToken = jwt.verify(loginResponse.body.token, process.env.SECRET)
+  assert.notStrictEqual(decodedToken.id, userWithPost.id.toString(), "token id same as creator id")
+
+  const IDtoDelete = userWithPost.blogs[0].toString()
+  assert.ok(IDtoDelete, "blog id to delete should exist");
+  await api
+    .delete(`/api/blogs/${IDtoDelete}`)
+    .set("authorization", token)
+    .send({ user: userId })
+    .expect(401);
+  await api.get(`/api/blogs/${IDtoDelete}`).expect(404);
+});
+
 test("update a blog post", async () => {
   const userId = (await api.get("/api/users")).body[0].id;
   assert.ok(mongoose.isValidObjectId(userId), "valid userId as ObjectID");
