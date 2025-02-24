@@ -24,8 +24,10 @@ blogRouter.post("/", async (req, res) => {
   const userId = req.body.user;
 
   let user = await User.findById(userId);
-
-  const decodedToken = jwt.verify(getTokenFrom(req), process.env.SECRET)
+  if (!req.token) {
+    return res.status(401).json({ error: "no token provided" })
+  }
+  const decodedToken = jwt.verify(req.token, process.env.SECRET)
   if (!decodedToken.id) {
     return res.status(401).json({ error: "token invalid" })
   }
@@ -53,7 +55,22 @@ blogRouter.post("/", async (req, res) => {
 });
 
 blogRouter.delete("/:id", async (req, res) => {
+  const token = req.token
+  const userId = req.body.user;
+  if (!token) {
+    return res.status(401).json({ error: "no token provided" })
+  }
+  console.log("to jwt")
+  const decodedToken = jwt.verify(token, process.env.SECRET)
+  const blog = await Blog.findOne({ user: userId })
+  const user = await User.findById(userId)
+  if (!decodedToken.id) {
+    return res.status(401).json({ error: "token invalid" })
+  } else if (decodedToken.id !== blog.user.toString()) {
+    return res.status(401).json({ error: "access restricted" })
+  }
   const deletedBlog = await Blog.findByIdAndDelete(req.params.id);
+
   if (deletedBlog) {
     res.status(204).end();
   } else {
@@ -62,7 +79,7 @@ blogRouter.delete("/:id", async (req, res) => {
 });
 
 blogRouter.put("/:id", async (req, res) => {
-  // TODO: add user change
+  // ??? TODO: add user change
   const { title, author, likes, url } = req.body;
   if (!title && !author && !likes && !url) {
     return res.status(400).json({ error: "At least one field is required" });

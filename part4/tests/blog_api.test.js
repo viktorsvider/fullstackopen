@@ -7,6 +7,7 @@ const testHelper = require("./test_helper");
 const Blog = require("../models/blog");
 const User = require("../models/user");
 const bcrypt = require("bcrypt");
+const jwt = require("jsonwebtoken");
 
 const api = supertest(app);
 
@@ -39,17 +40,15 @@ beforeEach(async () => {
   const promiseArray = testHelper.initialBlogs.map(async (blog) => {
     const randomUser = users[randUserIndex()];
 
-    // Convert the user ID to ObjectId before assigning
     const userObjectId = new mongoose.Types.ObjectId(randomUser.id);
 
     const newBlog = new Blog({
       ...blog,
-      user: userObjectId, // Ensure ObjectId is assigned
+      user: userObjectId,
     });
 
     const savedBlog = await newBlog.save();
 
-    // Properly update the user
     await User.findByIdAndUpdate(userObjectId, {
       $push: { blogs: savedBlog._id },
     });
@@ -84,19 +83,16 @@ test("unique property of blog post is named id not _id", async () => {
 });
 
 test("making HTTP POST creates a new blog post", async () => {
-  const users = await api.get("/api/users");
-  const userId = users.body[0].id;
-  assert.ok(mongoose.isValidObjectId(userId), "valid userId as ObjectID");
-
   const user = testHelper.initialUsers[0];
-  const token = (await api
+  const loginResponse = await api
     .post("/api/login")
     .send(user)
     .expect(200)
-    .expect("Content-Type", /application\/json/)).body.token
+    .expect("Content-Type", /application\/json/);
 
-  // user.token = token
-  // console.log("token: ", token)
+  const token = loginResponse.body.token;
+  const decodedToken = jwt.verify(token, process.env.SECRET);
+  const userId = decodedToken.id;
 
   const blog = {
     title: "New blog post",
@@ -112,14 +108,13 @@ test("making HTTP POST creates a new blog post", async () => {
     .send(blog)
     .expect(201)
     .expect("Content-Type", /application\/json/);
+
   const response = await api.get("/api/blogs");
   const postedBlog = response.body.at(-1);
-  // console.log("posted:", postedBlog)
   assert.strictEqual(postedBlog.title, blog.title, "equal titles");
   assert.strictEqual(postedBlog.author, blog.author, "equal author");
   assert.strictEqual(postedBlog.url, blog.url, "equal url");
   assert.strictEqual(postedBlog.likes, blog.likes, "equal likes");
-  // assert.strictEqual(postedBlog.user, blog.user, "equal user");
   assert.strictEqual(response.body.length, testHelper.initialBlogs.length + 1, "equal number of blogs");
 });
 
@@ -191,13 +186,26 @@ test("if title or url property is missing, results in Bad Request", async () => 
 });
 
 test("delete blog post", async () => {
-  await api
-    .get("/api/blogs")
+  const userWithPost = await User.findOne({ blogs: { $ne: [] } })
+  const userId = userWithPost.id
+  const user = testHelper.initialUsers.find(user => user.username === userWithPost.username)
+
+  assert.ok(user, "user doesn't exist")
+
+  const loginResponse = await api
+    .post("/api/login")
+    .send({ username: user.username, password: user.password })
     .expect(200)
-    .expect("Content-Type", /application\/json/);
-  const IDtoDelete = (await api.get("/api/blogs")).body[0].id;
+    .expect("Content-Type", /application\/json/)
+  const token = `Bearer ${loginResponse.body.token}`
+
+  const IDtoDelete = userWithPost.blogs[0].toString()
   assert.ok(IDtoDelete, "blog id to delete should exist");
-  await api.delete(`/api/blogs/${IDtoDelete}`).expect(204);
+  await api
+    .delete(`/api/blogs/${IDtoDelete}`)
+    .set("authorization", token)
+    .send({ user: userId })
+    .expect(204);
   await api.get(`/api/blogs/${IDtoDelete}`).expect(404);
 });
 
