@@ -21,9 +21,7 @@ blogRouter.get("/", async (req, res) => {
 
 blogRouter.post("/", async (req, res) => {
   const { title, author, url, likes } = req.body;
-  const userId = req.user;
 
-  let user = await User.findById(userId);
   if (!req.token) {
     return res.status(401).json({ error: "no token provided" })
   }
@@ -32,6 +30,7 @@ blogRouter.post("/", async (req, res) => {
     return res.status(401).json({ error: "token invalid" })
   }
 
+  let user = await User.findById(decodedToken.id);
   if (!title || !url) {
     return res.status(400).json({ error: "Title and URL are required" });
   }
@@ -45,7 +44,7 @@ blogRouter.post("/", async (req, res) => {
     author,
     url,
     likes: likes || 0,
-    user: user._id,
+    user: decodedToken.id,
   });
   const savedBlog = await blog.save();
 
