@@ -3,20 +3,21 @@ const mongoose = require("mongoose");
 const blogSchema = new mongoose.Schema({
   title: {
     type: String,
-    minLength: 1,
     required: true,
   },
   author: String,
   url: {
     type: String,
-    minLength: 5,
     required: true,
   },
-  likes: Number,
+  likes: {
+    type: Number,
+    default: 0,
+  },
   user: {
-    required: true,
-    ref: "User",
     type: mongoose.Schema.Types.ObjectId,
+    ref: "User",
+    required: true,
   },
 });
 

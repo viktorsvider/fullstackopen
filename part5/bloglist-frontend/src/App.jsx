@@ -1,17 +1,20 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import Blog from './components/Blog'
+import BlogForm from './components/BlogForm'
 import blogService from './services/blogs'
 import loginService from './services/login'
+import Togglable from './components/Togglable'
 
+// TODO: fix backend creating blog with no author (should be creating as logged in user??)
 const App = () => {
   const [blogs, setBlogs] = useState([])
   const [username, setUsername] = useState("")
   const [password, setPassword] = useState("")
   const [user, setUser] = useState(null)
   const [errorMessage, setErrorMessage] = useState(null)
-  const [title, setTitle] = useState("")
-  const [author, setAuthor] = useState("")
-  const [url, setUrl] = useState("")
+  // const [title, setTitle] = useState("")
+  // const [author, setAuthor] = useState("")
+  // const [url, setUrl] = useState("")
   const [notificationMessage, setNotificationMessage] = useState("")
 
   useEffect(() => {
@@ -20,8 +23,11 @@ const App = () => {
     )
   }, [])
 
+
+  const blogFormRef = useRef()
+
+  const loggedUserJSON = window.localStorage.getItem("loggedUser")
   useEffect(() => {
-    const loggedUserJSON = window.localStorage.getItem("loggedUser")
     if (loggedUserJSON) {
       const user = JSON.parse(loggedUserJSON)
       setUser(user)
@@ -70,6 +76,7 @@ const App = () => {
         setNotificationMessage(null)
       }, 5000)
     } catch (exception) {
+      console.log("here", exception)
       setErrorMessage("Wrong credentials")
       setTimeout(() => {
         setErrorMessage(null)
@@ -85,34 +92,15 @@ const App = () => {
     window.localStorage.removeItem("loggedUser")
   }
 
-  const handleCreateBlog = async (event) => {
-    console.log("handle")
-    event.preventDefault()
-    const blog = {
-      title,
-      author,
-      url
-    }
-    const createdBlog = await blogService.create(blog)
-    if (createdBlog) {
-      setNotificationMessage(`Succesfully created blog ${createdBlog.title} by ${createdBlog.author}`)
-      setTimeout(() => {
-        setNotificationMessage(null)
-      }, 5000)
-      setBlogs(blogs.concat(createdBlog))
-      setAuthor("")
-      setTitle("")
-      setUrl("")
-    }
-    else {
+  const addBlog = async (blogObject) => {
+    blogFormRef.current.toggleVisibility()
 
-      setErrorMessage(`Failed to create blog ${blog.title} by ${blog.author}`)
-      setTimeout(() => {
-        setErrorMessage(null)
-      }, 5000)
-    }
+    blogService
+      .create(blogObject)
+      .then(returnedBlog =>
+        setBlogs(blogs.concat(returnedBlog))
+      )
   }
-
 
   if (user === null) {
     return (
@@ -140,26 +128,18 @@ const App = () => {
     <p>{user.name} logged in
       <button onClick={handleLogout}>logout</button>
     </p>
+    <Togglable buttonLabel="new blog" ref={blogFormRef}>
+      <BlogForm
+        createBlog={addBlog}
+      ></BlogForm>
+    </Togglable>
 
-    <h2>create new</h2>
-    <form onSubmit={handleCreateBlog}>
-      <div>
-        title:<input value={title} onChange={({ target }) => setTitle(target.value)}></input>
-      </div>
-      <div>
-        author:<input value={author} onChange={({ target }) => setAuthor(target.value)}></input>
-      </div>
-      <div>
-        url:<input value={url} onChange={({ target }) => setUrl(target.value)}></input>
-      </div>
-      <button type='submit' >create</button>
-    </form >
     {
       blogs.map(blog =>
         <Blog key={blog.id} blog={blog} />
       )
     }
-  </div >)
+  </div>)
 }
 
 export default App

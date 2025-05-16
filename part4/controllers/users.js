@@ -6,6 +6,7 @@ usersRouter.post("/", async (request, response) => {
   const { username, name, password } = request.body;
 
   const saltRounds = 11;
+  console.log(password)
   const passwordHash = await bcrypt.hash(password, saltRounds);
 
   if (!username || username.length < 3) {
