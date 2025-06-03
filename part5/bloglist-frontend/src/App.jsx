@@ -5,16 +5,12 @@ import blogService from './services/blogs'
 import loginService from './services/login'
 import Togglable from './components/Togglable'
 
-// TODO: fix backend creating blog with no author (should be creating as logged in user??)
 const App = () => {
   const [blogs, setBlogs] = useState([])
   const [username, setUsername] = useState("")
   const [password, setPassword] = useState("")
   const [user, setUser] = useState(null)
   const [errorMessage, setErrorMessage] = useState(null)
-  // const [title, setTitle] = useState("")
-  // const [author, setAuthor] = useState("")
-  // const [url, setUrl] = useState("")
   const [notificationMessage, setNotificationMessage] = useState("")
 
   useEffect(() => {
@@ -70,6 +66,7 @@ const App = () => {
       setUser(user)
       setUsername("")
       setPassword("")
+      blogService.setToken(user.token)
       window.localStorage.setItem("loggedUser", JSON.stringify(user))
       setNotificationMessage("Succesfully logined in")
       setTimeout(() => {
