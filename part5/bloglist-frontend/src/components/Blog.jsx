@@ -1,4 +1,5 @@
 import { useState } from "react"
+import blogService from '../services/blogs'
 
 const Blog = ({ blog }) => {
   const [detailsExposed, setDetailsExposed] = useState(false)
@@ -10,6 +11,11 @@ const Blog = ({ blog }) => {
     setDetailsExposed(false)
   }
 
+  const handleLike = (blog) => {
+    const likedBlog = blogService.like(blog)
+    console.log(likedBlog)
+  }
+
   const blogStyle = {
     paddingTop: 10,
     paddingLeft: 2,
@@ -18,6 +24,7 @@ const Blog = ({ blog }) => {
     marginBottom: 5
   }
 
+  console.log("in <blog>", blog)
   if (detailsExposed) {
     return (
       <div style={blogStyle}>
@@ -26,11 +33,11 @@ const Blog = ({ blog }) => {
           <button onClick={handleCollapseDetails}>hide</button>
         </div>
         <div>
-          {blog.url ? "no url" : blog.url}
+          {blog.url === undefined ? "no url" : blog.url}
         </div>
         <div>
-          {blog.likes ? 0 : blog.likes}
-          <button>like</button>
+          {blog.likes === undefined ? 0 : blog.likes}
+          <button onClick={() => { handleLike(blog) }}>like</button>
         </div>
         <div>
           {blog.author}
