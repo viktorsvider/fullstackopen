@@ -99,6 +99,17 @@ const App = () => {
       )
   }
 
+  const likeBlog = async (blogObject) => {
+    try {
+      const updated = await blogService.like(blogObject)
+      console.log(updated)
+      const fetched = await blogService.getAll()
+      setBlogs(fetched.map(blog => blog.id === updated.id ? updated : blog))
+    } catch (e) {
+      console.error(e)
+    }
+  }
+
   if (user === null) {
     return (
       <div>
@@ -133,7 +144,7 @@ const App = () => {
 
     {
       blogs.map(blog =>
-        <Blog key={blog.id} blog={blog} />
+        <Blog key={blog.id} blog={blog} likeBlog={likeBlog} />
       )
     }
   </div>)

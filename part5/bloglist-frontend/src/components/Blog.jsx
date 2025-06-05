@@ -1,7 +1,7 @@
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import blogService from '../services/blogs'
 
-const Blog = ({ blog }) => {
+const Blog = (props) => {
   const [detailsExposed, setDetailsExposed] = useState(false)
 
   const handleShowDetails = () => {
@@ -11,10 +11,10 @@ const Blog = ({ blog }) => {
     setDetailsExposed(false)
   }
 
-  const handleLike = (blog) => {
-    const likedBlog = blogService.like(blog)
-    console.log(likedBlog)
-  }
+
+  // const handleLike = async (blog) => {
+  //   const likedBlog = await blogService.like(blog)
+  // }
 
   const blogStyle = {
     paddingTop: 10,
@@ -24,29 +24,30 @@ const Blog = ({ blog }) => {
     marginBottom: 5
   }
 
-  console.log("in <blog>", blog)
+  console.log("props", props)
+  console.log("in <blog>", props.blog)
   if (detailsExposed) {
     return (
       <div style={blogStyle}>
         <div>
-          {blog.title}
+          {props.blog.title}
           <button onClick={handleCollapseDetails}>hide</button>
         </div>
         <div>
-          {blog.url === undefined ? "no url" : blog.url}
+          {props.blog.url === undefined ? "no url" : props.blog.url}
         </div>
         <div>
-          {blog.likes === undefined ? 0 : blog.likes}
-          <button onClick={() => { handleLike(blog) }}>like</button>
+          {props.blog.likes === undefined ? 0 : props.blog.likes}
+          <button onClick={() => props.likeBlog(props.blog)}>like</button>
         </div>
         <div>
-          {blog.author}
+          {props.blog.author}
         </div>
       </div>
     )
   }
   else {
-    return <div style={blogStyle}>{blog.title}<button onClick={handleShowDetails}>view</button></div>
+    return <div style={blogStyle}>{props.blog.title}<button onClick={handleShowDetails}>view</button></div>
   }
 }
 
