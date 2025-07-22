@@ -103,8 +103,8 @@ const App = () => {
     try {
       const updated = await blogService.like(blogObject)
       console.log(updated)
-      const fetched = await blogService.getAll()
-      setBlogs(fetched.map(blog => blog.id === updated.id ? updated : blog))
+      // const fetched = await blogService.getAll()
+      setBlogs(prev => prev.map(blog => blog.id === updated.id ? updated : blog))
     } catch (e) {
       console.error(e)
     }
@@ -143,7 +143,7 @@ const App = () => {
     </Togglable>
 
     {
-      blogs.map(blog =>
+      blogs.sort((cur, next) => next.likes - cur.likes).map(blog =>
         <Blog key={blog.id} blog={blog} likeBlog={likeBlog} />
       )
     }
