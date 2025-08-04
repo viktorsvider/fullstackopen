@@ -64,14 +64,14 @@ blogRouter.delete("/:id", async (req, res) => {
 });
 
 blogRouter.put("/:id", async (req, res) => {
-  const { title, author, likes, url } = req.body;
-  if (!title && !author && !likes && !url) {
+  const { title, likes, url } = req.body;
+  if (!title && !likes && !url) {
     return res.status(400).json({ error: "At least one field is required" });
   }
 
   const updatedBlog = await Blog.findByIdAndUpdate(
     req.params.id,
-    { title, author, likes, url },
+    { title, likes, url },
     { new: true, runValidators: true, context: "query" },
   );
   if (updatedBlog) {
