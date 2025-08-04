@@ -54,26 +54,17 @@ blogRouter.post("/", async (req, res) => {
 });
 
 blogRouter.delete("/:id", async (req, res) => {
-  const token = req.token
-  const userId = req.user;
-  if (!token) {
-    return res.status(401).json({ error: "no token provided" })
+  const user = req.user
+  if (!user) {
+    return res.status(401).json({ error: "no token provided or invalid" })
   }
 
-  const decodedToken = jwt.verify(token, process.env.SECRET)
-  const blog = await Blog.findOne({ user: userId })
-  const user = await User.findById(userId)
-  if (!decodedToken.id) {
-    return res.status(401).json({ error: "token invalid" })
-  } else if (decodedToken.id !== blog.user.toString()) {
+  const blog = await Blog.findById(req.params.id)
+  if (blog.user.toString() === req.user.id) {
+    await Blog.findByIdAndDelete(req.params.id);
+    return res.status(204).end()
+  } else if (blog.user.toString() !== req.user.id) {
     return res.status(401).json({ error: "access restricted" })
-  }
-  const deletedBlog = await Blog.findByIdAndDelete(req.params.id);
-
-  if (deletedBlog) {
-    res.status(204).end();
-  } else {
-    res.status(404).json({ error: "Blog not found" });
   }
 });
 

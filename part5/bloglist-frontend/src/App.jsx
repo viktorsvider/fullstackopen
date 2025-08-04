@@ -107,7 +107,7 @@ const App = () => {
 
   const likeBlog = async (blogObject) => {
     try {
-      const updated = await blogService.like(blogObject);
+      const updated = await blogService.update(blogObject);
       console.log(updated);
       const fetched = await blogService.getAll();
       setBlogs(
@@ -115,6 +115,16 @@ const App = () => {
           .map((blog) => (blog.id === updated.id ? updated : blog))
           .sort(compareLikes)
       );
+    } catch (e) {
+      console.error(e);
+    }
+  };
+
+  const deleteBlog = async (id) => {
+    console.log("deleteBlog");
+    try {
+      await blogService.deleteBlog(id);
+      setBlogs(await blogService.getAll());
     } catch (e) {
       console.error(e);
     }
@@ -163,7 +173,13 @@ const App = () => {
       </Togglable>
 
       {blogs.map((blog) => (
-        <Blog key={blog.id} blog={blog} likeBlog={likeBlog} />
+        <Blog
+          key={blog.id}
+          blog={blog}
+          likeBlog={likeBlog}
+          deleteBlog={deleteBlog}
+          user={user}
+        />
       ))}
     </div>
   );
