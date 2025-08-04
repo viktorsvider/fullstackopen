@@ -29,9 +29,7 @@ const Blog = (props) => {
     }
   };
 
-  const showDeleteButton =
-    JSON.parse(localStorage.getItem("loggedUser")).username ===
-    props.blog.user.username;
+  const showDeleteButton = props.user.id === props.blog.user.id;
 
   console.log("user.id", props.user.id, "blog.user.id", props.blog.user.id);
   console.log("props", props);
