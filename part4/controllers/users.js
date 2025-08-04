@@ -6,7 +6,6 @@ usersRouter.post("/", async (request, response) => {
   const { username, name, password } = request.body;
 
   const saltRounds = 11;
-  console.log(password)
   const passwordHash = await bcrypt.hash(password, saltRounds);
 
   if (!username || username.length < 3) {
@@ -21,9 +20,7 @@ usersRouter.post("/", async (request, response) => {
 
   const existingUser = await User.findOne({ username });
   if (existingUser) {
-    return response
-      .status(400)
-      .json({ error: "Username already taken" });
+    return response.status(400).json({ error: "Username already taken" });
   }
 
   const user = new User({
@@ -40,7 +37,11 @@ usersRouter.post("/", async (request, response) => {
 
 usersRouter.get("/", async (request, response) => {
   // const users = await User.find({}).populate("blogs");
-  const users = await User.find({}).populate("blogs", { title: 1, author: 1, url: 1 });
+  const users = await User.find({}).populate("blogs", {
+    title: 1,
+    author: 1,
+    url: 1,
+  });
 
   if (users) {
     response.status(200).json(users);
