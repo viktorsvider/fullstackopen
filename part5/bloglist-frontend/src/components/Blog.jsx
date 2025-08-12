@@ -41,7 +41,7 @@ const Blog = (props) => {
         </div>
         <div>{props.blog.url === undefined ? "no url" : props.blog.url}</div>
         <div>
-          {props.blog.likes === undefined ? 0 : props.blog.likes}
+          likes {props.blog.likes === undefined ? 0 : props.blog.likes}
           <button onClick={() => props.likeBlog(props.blog)}>like</button>
         </div>
         <div>{props.blog.author}</div>
