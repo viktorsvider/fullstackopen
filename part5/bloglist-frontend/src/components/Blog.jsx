@@ -1,22 +1,22 @@
-import { useState } from "react";
+import { useState } from 'react'
 
 const Blog = (props) => {
-  const [detailsExposed, setDetailsExposed] = useState(false);
+  const [detailsExposed, setDetailsExposed] = useState(false)
 
   const handleShowDetails = () => {
-    setDetailsExposed(true);
-  };
+    setDetailsExposed(true)
+  }
   const handleCollapseDetails = () => {
-    setDetailsExposed(false);
-  };
+    setDetailsExposed(false)
+  }
 
   const blogStyle = {
     paddingTop: 10,
     paddingLeft: 2,
-    border: "solid",
+    border: 'solid',
     borderWidth: 1,
     marginBottom: 5,
-  };
+  }
 
   const handleDelete = () => {
     if (
@@ -24,11 +24,11 @@ const Blog = (props) => {
         `Do you want to delete ${props.blog.title} by ${props.blog.author}`
       )
     ) {
-      props.deleteBlog(props.blog.id);
+      props.deleteBlog(props.blog.id)
     }
-  };
+  }
 
-  const showDeleteButton = props.user === props.blog.user.username;
+  const showDeleteButton = props.user === props.blog.user.username
 
   // console.log("user.id", props.user, "blog.user.id", props.blog.user.username);
   // console.log("props", props);
@@ -39,7 +39,7 @@ const Blog = (props) => {
           {props.blog.title}
           <button onClick={handleCollapseDetails}>hide</button>
         </div>
-        <div>{props.blog.url === undefined ? "no url" : props.blog.url}</div>
+        <div>{props.blog.url === undefined ? 'no url' : props.blog.url}</div>
         <div>
           likes {props.blog.likes === undefined ? 0 : props.blog.likes}
           <button onClick={() => props.likeBlog(props.blog)}>like</button>
@@ -49,15 +49,15 @@ const Blog = (props) => {
           {showDeleteButton && <button onClick={handleDelete}>delete</button>}
         </div>
       </div>
-    );
+    )
   } else {
     return (
       <div style={blogStyle}>
         {props.blog.title}
         <button onClick={handleShowDetails}>view</button>
       </div>
-    );
+    )
   }
-};
+}
 
-export default Blog;
+export default Blog
