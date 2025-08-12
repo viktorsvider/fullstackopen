@@ -30,6 +30,7 @@ const App = () => {
       setUser(user)
       blogService.setToken(user.token)
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
 
