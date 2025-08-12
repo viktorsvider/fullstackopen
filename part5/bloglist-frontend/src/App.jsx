@@ -81,7 +81,6 @@ const App = () => {
         setNotificationMessage(null);
       }, 5000);
     } catch (exception) {
-      console.log("here", exception);
       setErrorMessage("Wrong credentials");
       setTimeout(() => {
         setErrorMessage(null);
@@ -107,21 +106,15 @@ const App = () => {
 
   const likeBlog = async (blogObject) => {
     try {
-      const updated = await blogService.update(blogObject);
-      console.log(updated);
+      await blogService.update(blogObject);
       const fetched = await blogService.getAll();
-      setBlogs(
-        fetched
-          .map((blog) => (blog.id === updated.id ? updated : blog))
-          .sort(compareLikes)
-      );
+      setBlogs(fetched.sort(compareLikes));
     } catch (e) {
       console.error(e);
     }
   };
 
   const deleteBlog = async (id) => {
-    console.log("deleteBlog");
     try {
       await blogService.deleteBlog(id);
       setBlogs(await blogService.getAll());
@@ -178,7 +171,7 @@ const App = () => {
           blog={blog}
           likeBlog={likeBlog}
           deleteBlog={deleteBlog}
-          user={user}
+          user={user.username}
         />
       ))}
     </div>

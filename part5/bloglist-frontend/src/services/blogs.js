@@ -1,45 +1,45 @@
-import axios from 'axios'
-const baseUrl = '/api/blogs'
+import axios from "axios";
+const baseUrl = "/api/blogs";
 
-let token = null
-const setToken = newToken => {
-  token = `Bearer ${newToken}`
-  console.log(token)
-}
+let token = null;
+const setToken = (newToken) => {
+  token = `Bearer ${newToken}`;
+  // console.log(token)
+};
 
-const create = async newBlog => {
+const create = async (newBlog) => {
   const config = {
     headers: {
-      Authorization: token
-    }
-  }
-  const postResponse = await axios.post(baseUrl, newBlog, config)
-  return postResponse.data
-}
+      Authorization: token,
+    },
+  };
+  const postResponse = await axios.post(baseUrl, newBlog, config);
+  return postResponse.data;
+};
 
 // this should get and only then put???
 // what if 2 different person do like simultaneously
-const update = blog => {
-  const putUrl = `/api/blogs/${blog.id}`
-  blog.likes = blog.likes + 1
-  const putResponse = axios.put(putUrl, blog)
-  return putResponse.then(response => response.data)
-}
+const update = (blog) => {
+  const putUrl = `/api/blogs/${blog.id}`;
+  blog.likes = blog.likes + 1;
+  const putResponse = axios.put(putUrl, blog);
+  return putResponse.then((response) => response.data);
+};
 
-const deleteBlog = id => {
-  const deleteUrl = `/api/blogs/${id}`
+const deleteBlog = (id) => {
+  const deleteUrl = `/api/blogs/${id}`;
   const config = {
     headers: {
-      Authorization: token
-    }
-  }
-  const deleteResponse = axios.delete(deleteUrl, config)
-  return deleteResponse.then(response => response.data)
-}
+      Authorization: token,
+    },
+  };
+  const deleteResponse = axios.delete(deleteUrl, config);
+  return deleteResponse.then((response) => response.data);
+};
 
 const getAll = () => {
-  const request = axios.get(baseUrl)
-  return request.then(response => response.data)
-}
+  const request = axios.get(baseUrl);
+  return request.then((response) => response.data);
+};
 
-export default { getAll, create, update, deleteBlog, setToken }
+export default { getAll, create, update, deleteBlog, setToken };

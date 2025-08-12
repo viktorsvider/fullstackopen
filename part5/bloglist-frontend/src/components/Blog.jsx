@@ -1,5 +1,4 @@
-import { useEffect, useState } from "react";
-import blogService from "../services/blogs";
+import { useState } from "react";
 
 const Blog = (props) => {
   const [detailsExposed, setDetailsExposed] = useState(false);
@@ -29,12 +28,10 @@ const Blog = (props) => {
     }
   };
 
-  const showDeleteButton =
-    JSON.parse(localStorage.getItem("loggedUser")).username ===
-    props.blog.user.username;
+  const showDeleteButton = props.user === props.blog.user.username;
 
-  console.log("user.id", props.user.id, "blog.user.id", props.blog.user.id);
-  console.log("props", props);
+  // console.log("user.id", props.user, "blog.user.id", props.blog.user.username);
+  // console.log("props", props);
   if (detailsExposed) {
     return (
       <div style={blogStyle}>
