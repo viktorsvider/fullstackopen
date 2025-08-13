@@ -53,7 +53,7 @@ const Blog = (props) => {
   } else {
     return (
       <div style={blogStyle}>
-        {props.blog.title}
+        {props.blog.title} {'by'} {props.blog.author}
         <button onClick={handleShowDetails}>view</button>
       </div>
     )

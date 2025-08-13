@@ -11,6 +11,11 @@ node_modules
 dist
 dist-ssr
 *.local
+coverage
+
+# Configs for eslint
+!.eslintignore
+!.eslintrc.cjs
 
 # Editor directories and files
 .vscode/*
